@@ -2,20 +2,42 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import type { Application } from "@/lib/types";
+import type { Application, ApplicationStage } from "@/lib/types";
 import ApplicationCard from "@/components/ApplicationCard";
 import JDSlideOver from "@/components/JDSlideOver";
 import SearchFilterBar from "@/components/SearchFilterBar";
+import KanbanBoard from "@/components/KanbanBoard";
+import ApplicationsTable from "@/components/ApplicationsTable";
+import CalendarView from "@/components/CalendarView";
+import StageBreakdown from "@/components/StageBreakdown";
 import { computeStats } from "@/lib/stats";
 import { isStale } from "@/lib/format";
+import { useLocalStorage } from "@/lib/use-local-storage";
+
+type ViewMode = "cards" | "kanban" | "table" | "calendar";
+
+const VIEW_OPTIONS: { key: ViewMode; label: string }[] = [
+  { key: "cards", label: "Cards" },
+  { key: "kanban", label: "Kanban" },
+  { key: "table", label: "Table" },
+  { key: "calendar", label: "Calendar" },
+];
 
 export default function DashboardPage() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
-  const [stage, setStage] = useState("");
   const [quickView, setQuickView] = useState<Application | null>(null);
+
+  // View + filters persist across reloads via localStorage (useSyncExternalStore-backed,
+  // so there's no hydration flash or extra effect needed to restore them).
+  const [search, setSearch] = useLocalStorage("applytrack:search", "");
+  const [stage, setStage] = useLocalStorage("applytrack:stage", "");
+  const [rawView, setRawView] = useLocalStorage("applytrack:view", "kanban");
+  const view: ViewMode = VIEW_OPTIONS.some((o) => o.key === rawView)
+    ? (rawView as ViewMode)
+    : "kanban";
+  const setView = (next: ViewMode) => setRawView(next);
 
   useEffect(() => {
     let cancelled = false;
@@ -65,6 +87,29 @@ export default function DashboardPage() {
     [applications]
   );
 
+  async function handleStageChange(id: string, newStage: ApplicationStage) {
+    // Optimistic update so kanban drag feels instant.
+    setApplications((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, current_stage: newStage, updated_at: new Date().toISOString() } : a))
+    );
+    try {
+      const res = await fetch(`/api/applications/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ current_stage: newStage }),
+      });
+      if (!res.ok) throw new Error("Failed to update stage");
+    } catch {
+      // Revert on failure by refetching.
+      const params = new URLSearchParams();
+      if (search) params.set("q", search);
+      if (stage) params.set("stage", stage);
+      const res = await fetch(`/api/applications?${params.toString()}`);
+      const data = await res.json();
+      setApplications(data.applications ?? []);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -89,13 +134,32 @@ export default function DashboardPage() {
         <StatCard label="Stale (needs follow-up)" value={staleCount.toString()} />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-4">
+        <StageBreakdown stats={stats} />
+      </div>
+
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <SearchFilterBar
           search={search}
           stage={stage}
           onSearchChange={setSearch}
           onStageChange={setStage}
         />
+        <div className="flex gap-1 rounded-lg border border-neutral-200 bg-white p-1">
+          {VIEW_OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              onClick={() => setView(opt.key)}
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                view === opt.key
+                  ? "bg-neutral-900 text-white"
+                  : "text-neutral-500 hover:bg-neutral-100"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="mt-6">
@@ -112,11 +176,31 @@ export default function DashboardPage() {
             </Link>
           </div>
         )}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {applications.map((app) => (
-            <ApplicationCard key={app.id} application={app} onQuickView={setQuickView} />
-          ))}
-        </div>
+
+        {!loading && !error && applications.length > 0 && (
+          <>
+            {view === "cards" && (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {applications.map((app) => (
+                  <ApplicationCard key={app.id} application={app} onQuickView={setQuickView} />
+                ))}
+              </div>
+            )}
+            {view === "kanban" && (
+              <KanbanBoard
+                applications={applications}
+                onQuickView={setQuickView}
+                onStageChange={handleStageChange}
+              />
+            )}
+            {view === "table" && (
+              <ApplicationsTable applications={applications} onQuickView={setQuickView} />
+            )}
+            {view === "calendar" && (
+              <CalendarView applications={applications} onQuickView={setQuickView} />
+            )}
+          </>
+        )}
       </div>
 
       <JDSlideOver application={quickView} onClose={() => setQuickView(null)} />

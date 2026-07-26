@@ -87,6 +87,22 @@ export default function KanbanBoard({
                     <span>{daysSince(app.updated_at)}d since update</span>
                     {app.next_action_date && <span>Due {formatDate(app.next_action_date)}</span>}
                   </div>
+
+                  {/* Drag-and-drop doesn't work on touch devices, so this select is the
+                      primary way to move a card on mobile — and a fine desktop fallback too. */}
+                  <div onClick={(e) => e.stopPropagation()} className="mt-2">
+                    <select
+                      value={app.current_stage}
+                      onChange={(e) => onStageChange(app.id, e.target.value as ApplicationStage)}
+                      className="w-full rounded-md border border-neutral-200 bg-neutral-50 px-1.5 py-1 text-[11px] text-neutral-600"
+                    >
+                      {STAGE_ORDER.map((s) => (
+                        <option key={s} value={s}>
+                          {STAGE_LABELS[s]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               ))}
             </div>

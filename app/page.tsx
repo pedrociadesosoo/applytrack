@@ -13,6 +13,7 @@ import StageBreakdown from "@/components/StageBreakdown";
 import { computeStats } from "@/lib/stats";
 import { isStale } from "@/lib/format";
 import { useLocalStorage } from "@/lib/use-local-storage";
+import { CardsSkeleton, KanbanSkeleton, TableSkeleton, CalendarSkeleton } from "@/components/Skeletons";
 
 type ViewMode = "cards" | "kanban" | "table" | "calendar";
 
@@ -163,7 +164,10 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-6">
-        {loading && <p className="text-sm text-neutral-400">Loading...</p>}
+        {loading && view === "cards" && <CardsSkeleton />}
+        {loading && view === "kanban" && <KanbanSkeleton />}
+        {loading && view === "table" && <TableSkeleton />}
+        {loading && view === "calendar" && <CalendarSkeleton />}
         {error && <p className="text-sm text-rose-600">{error}</p>}
         {!loading && !error && applications.length === 0 && (
           <div className="rounded-xl border border-dashed border-neutral-200 py-16 text-center">

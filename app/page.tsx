@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Application, ApplicationStage } from "@/lib/types";
 import ApplicationCard from "@/components/ApplicationCard";
@@ -10,8 +10,7 @@ import KanbanBoard from "@/components/KanbanBoard";
 import ApplicationsTable from "@/components/ApplicationsTable";
 import CalendarView from "@/components/CalendarView";
 import StageBreakdown from "@/components/StageBreakdown";
-import { computeStats } from "@/lib/stats";
-import { isStale } from "@/lib/format";
+import type { DashboardStats } from "@/lib/stats";
 import { useLocalStorage } from "@/lib/use-local-storage";
 import { CardsSkeleton, KanbanSkeleton, TableSkeleton, CalendarSkeleton } from "@/components/Skeletons";
 
@@ -29,6 +28,28 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quickView, setQuickView] = useState<Application | null>(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+
+  // Stats come from the server and cover every application (not just the
+  // current search/filter), using each app's full stage history. Bumping
+  // statsVersion refetches them after a stage change.
+  const [statsVersion, setStatsVersion] = useState(0);
+  const refreshStats = () => setStatsVersion((v) => v + 1);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/stats")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && !data.error) setStats(data.stats);
+      })
+      .catch(() => {
+        // Stats are non-critical; the list still renders without them.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [statsVersion]);
 
   // View + filters persist across reloads via localStorage (useSyncExternalStore-backed,
   // so there's no hydration flash or extra effect needed to restore them).
@@ -76,18 +97,6 @@ export default function DashboardPage() {
     };
   }, [search, stage]);
 
-  const stats = useMemo(() => computeStats(applications), [applications]);
-
-  const staleCount = useMemo(
-    () =>
-      applications.filter(
-        (a) =>
-          !["offer", "rejected", "withdrawn"].includes(a.current_stage) &&
-          isStale(a.updated_at)
-      ).length,
-    [applications]
-  );
-
   async function handleStageChange(id: string, newStage: ApplicationStage) {
     // Optimistic update so kanban drag feels instant.
     setApplications((prev) =>
@@ -100,6 +109,7 @@ export default function DashboardPage() {
         body: JSON.stringify({ current_stage: newStage }),
       });
       if (!res.ok) throw new Error("Failed to update stage");
+      refreshStats();
     } catch {
       // Revert on failure by refetching.
       const params = new URLSearchParams();
@@ -129,15 +139,20 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Total applications" value={stats.total.toString()} />
-        <StatCard label="Response rate" value={formatPct(stats.responseRate)} />
-        <StatCard label="Interview conversion" value={formatPct(stats.interviewConversionRate)} />
-        <StatCard label="Stale (needs follow-up)" value={staleCount.toString()} />
+        <StatCard label="Total applications" value={stats ? stats.total.toString() : "—"} />
+        <StatCard label="Response rate" value={stats ? formatPct(stats.responseRate) : "—"} />
+        <StatCard
+          label="Interview conversion"
+          value={stats ? formatPct(stats.interviewConversionRate) : "—"}
+        />
+        <StatCard label="Stale (needs follow-up)" value={stats ? stats.staleCount.toString() : "—"} />
       </div>
 
-      <div className="mt-4">
-        <StageBreakdown stats={stats} />
-      </div>
+      {stats && (
+        <div className="mt-4">
+          <StageBreakdown stats={stats} />
+        </div>
+      )}
 
       <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <SearchFilterBar

@@ -134,6 +134,9 @@ create trigger trg_applications_log_initial_event
   after insert on applications
   for each row execute function log_initial_application_event();
 
+-- Stage-change triggers and the application_progress view live in
+-- supabase/migrations/002_event_driven_stages.sql — run it right after this file.
+
 -- ---------------------------------------------------------------------------
 -- Row Level Security
 -- ---------------------------------------------------------------------------

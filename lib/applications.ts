@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { Application, ApplicationEvent, ApplicationInput } from "@/lib/types";
+import type { Application, ApplicationEvent, ApplicationInput, ApplicationProgress } from "@/lib/types";
 
 export interface ListFilters {
   search?: string;
@@ -73,19 +73,8 @@ export async function updateApplication(
 ): Promise<Application> {
   const supabase = createServerSupabaseClient();
 
-  // If the caller is changing current_stage, log it as an event so
-  // stage_history stays complete without extra client-side calls.
-  if (input.current_stage) {
-    const existing = await getApplication(id);
-    if (existing && existing.current_stage !== input.current_stage) {
-      await supabase.from("application_events").insert({
-        application_id: id,
-        stage: input.current_stage,
-        notes: "Stage updated manually",
-      });
-    }
-  }
-
+  // Stage changes are logged to application_events by a Postgres trigger
+  // (migration 002), so this stays a single atomic write.
   const { data, error } = await supabase
     .from("applications")
     .update(input)
@@ -100,4 +89,14 @@ export async function deleteApplication(id: string): Promise<void> {
   const supabase = createServerSupabaseClient();
   const { error } = await supabase.from("applications").delete().eq("id", id);
   if (error) throw error;
+}
+
+// One row per application with funnel flags computed from its full stage
+// history. Always unfiltered: dashboard stats describe the whole search,
+// not whatever the search box currently matches.
+export async function listProgress(): Promise<ApplicationProgress[]> {
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase.from("application_progress").select("*");
+  if (error) throw error;
+  return data ?? [];
 }

@@ -21,7 +21,8 @@ A few choices that shaped the build, and the reasoning behind them:
 - **Human-in-the-loop over full automation.** Email classification (Phase 3) will misfire sometimes — a rejection email that's actually a newsletter, a "your application was received" that's really an OA invite. Rather than auto-writing stage changes, flagged emails land in a review queue ("Claude thinks this means X — confirm or correct"). Slower than full automation, but it's the difference between a tool you trust and one you have to double-check.
 - **The job description is the source of truth, archived at apply-time.** Postings disappear once a role closes or fills, which means the JD is often the *only* record of what a role actually asked for. It's saved permanently on the application record rather than linked out to, and it's full-text searchable (`search_vector` in the schema) so "every role that mentioned SQL" is a real query, not a manual scan.
 - **Permissive RLS now, tightened later — documented, not hidden.** Phase 1 ships before auth does, so `supabase/schema.sql` has row-level security *enabled* but with an intentionally open policy, commented inline as temporary and scoped to flip to `auth.uid() = user_id` once Google OAuth lands in Phase 3. Technical debt that isn't written down is the kind that bites later.
-- **Stage changes are logged automatically, not just stored.** Updating `current_stage` on an application fires a Postgres trigger that appends to `application_events` — so the stage-history timeline (and later, time-in-stage analytics) comes for free instead of depending on the UI remembering to write two rows instead of one.
+- **The event log is the source of truth, enforced in the database.** Every stage change is a row in `application_events`, and Postgres triggers keep `current_stage` in sync in both directions: a manual edit or kanban drag logs an event, and inserting an event (which is how Gmail sync writes, with `source_email_id` attached) moves the application. Each change is one atomic write, and events that arrive out of order (e.g. a backfill of old emails) never move an application backwards.
+- **Funnel stats use the full history, not the current stage.** An application rejected after an onsite still counts as an interview. The `application_progress` view computes "ever got a response" / "ever reached an interview" per application, and stats always cover the whole search rather than whatever the search box matches.
 
 ---
 
@@ -32,7 +33,7 @@ A few choices that shaped the build, and the reasoning behind them:
 | **Application CRUD** | Add/edit/delete applications with company, role, source, stage, next action, resume/cover-letter version, and recruiter contact. |
 | **JD archive** | Full job description saved permanently per application; auto-parsed into sections (Responsibilities / Qualifications / About) when the source text has detectable headers; full-text searchable across every saved posting; quick-view slide-over from the dashboard card. |
 | **Dashboard & stats** | Response rate, interview conversion rate, and a stale-application count computed live from the current data — the start of the analytics layer, not a static readme claim. |
-| **Gmail auto-tracking** *(Phase 3)* | Read-only Gmail sync + Claude-based classification of application-related emails into stage changes, with a confirm/correct review queue. |
+| **Gmail auto-tracking** *(Phase 3)* | Read-only Gmail sync that makes manual entry the exception: "thanks for applying" confirmations create the application automatically, and later emails (OA invites, interview scheduling, rejections) move it through the pipeline. Claude-based classification, with low-confidence calls landing in a confirm/correct review queue. |
 | **AI follow-up assistant** *(Phase 4)* | Daily "what needs attention" panel, drafted (never auto-sent) follow-up emails, and a pre-interview prep brief generated from the saved JD. |
 | **Creative extras** *(Phase 5)* | Stage-progression timeline visualization, auto-fetched company logos, a private 1–5 confidence rating per interview stage, shareable "companies I've interviewed with" page. |
 
@@ -74,9 +75,9 @@ application_events
 
 Built in phases deliberately, each one shippable and demoable on its own before the next depends on it:
 
-1. **Data model + CRUD** *(this repo, current state)* — get the funnel representable end-to-end before automating anything.
-2. **Dashboard views** — kanban + calendar/timeline on top of the same data, no schema changes required.
-3. **Gmail auto-tracking** — the highest-leverage feature, deliberately sequenced *after* the data model is proven so classification has a stable target to write into.
+1. **Data model + CRUD** *(done)* — get the funnel representable end-to-end before automating anything.
+2. **Dashboard views** *(done)* — cards, kanban (drag-and-drop, with a select fallback on mobile), table, and calendar on top of the same data; view and filters persist across reloads.
+3. **Gmail auto-tracking** *(next)* — the highest-leverage feature, deliberately sequenced *after* the data model is proven so classification has a stable target to write into.
 4. **AI follow-up assistant** — needs (2) and (3) in place to have both pipeline state and email signal to reason over.
 5. **Creative extras** — nice-to-haves that don't block the core loop.
 
@@ -93,7 +94,7 @@ Built in phases deliberately, each one shippable and demoable on its own before 
 
 ## Getting started
 
-1. **Create a Supabase project** at [supabase.com](https://supabase.com), then in the SQL editor run `supabase/schema.sql` from this repo to create the tables, triggers, and indexes.
+1. **Create a Supabase project** at [supabase.com](https://supabase.com), then in the SQL editor run `supabase/schema.sql`, followed by `supabase/migrations/002_event_driven_stages.sql`, to create the tables, triggers, indexes, and stats view. (Already ran `schema.sql` earlier? Just run `002` — it's safe to re-run.)
 2. **Copy environment variables:**
    ```bash
    cp .env.example .env.local
@@ -112,4 +113,4 @@ Phase 3 (Gmail sync) will additionally require a Google Cloud project with the G
 
 ## Status
 
-Phase 1 is complete: schema, CRUD UI, JD archive with reading view and full-text search, and a live-computed stats strip. Phases 2–5 are scoped above and tracked as the next milestones.
+Phases 1–2 are complete: schema with an event-driven stage history, CRUD UI, JD archive with reading view and full-text search, history-based funnel stats, and four dashboard views. Phase 3 (Gmail auto-tracking, plus Google sign-in and per-user RLS) is next.

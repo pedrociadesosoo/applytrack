@@ -2,6 +2,7 @@
 
 import type { ApplicationStage } from "@/lib/types";
 import { STAGE_LABELS } from "@/lib/types";
+import { NO_REPLY_DAYS } from "@/lib/ghosting";
 
 // The pipeline at a glance, left to right in the order a process moves.
 // Bar length = how many applications sit at that stage right now (one hue:
@@ -99,6 +100,30 @@ export default function PipelineOverview({
           );
         })}
       </div>
+
+      <details className="group mt-3 text-xs text-neutral-500">
+        <summary className="cursor-pointer list-none font-medium text-neutral-500 hover:text-neutral-700">
+          <span className="inline-block transition group-open:rotate-90">›</span> How does an application get ghosted?
+        </summary>
+        <div className="mt-2 space-y-2 rounded-lg bg-neutral-50 p-3 leading-relaxed">
+          <p>ApplyTrack moves an open application to <b className="text-neutral-700">Ghosted</b> automatically when:</p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>
+              <b className="text-neutral-700">Its season starts with no outcome.</b> The season comes from the role title:
+              Summer 2027 → Jun 1, 2027 · Fall → Sep 1 · Winter → Jan 5 · Spring → Jan 15. An intern role with only a
+              year (&ldquo;2027 Intern&rdquo;) counts as that summer; a season with no year means the next one after you applied.
+            </li>
+            <li>
+              <b className="text-neutral-700">Or, for roles without a season, there&apos;s been no reply at all {NO_REPLY_DAYS} days after applying.</b>
+            </li>
+          </ul>
+          <p>
+            Offers, rejections, and withdrawn applications are never touched. A later email from the company brings the
+            application back, and if you move one out of Ghosted yourself, it stays where you put it. Each application&apos;s
+            page shows its ghost date.
+          </p>
+        </div>
+      </details>
     </section>
   );
 }

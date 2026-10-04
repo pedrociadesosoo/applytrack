@@ -1,8 +1,9 @@
 import type { ApplicationStage } from "@/lib/types";
 
-// Auto-ghosting: an internship/co-op that hasn't reached an outcome by the
-// day its season starts is over, whether or not the company ever said so.
-// The ghost date comes from the role title ("Summer 2027 SWE Intern").
+// Auto-ghosting, two rules:
+//  1. Season roles: an internship/co-op with no outcome by the day its
+//     season starts is over ("Summer 2027 SWE Intern" -> Jun 1 2027).
+//  2. Everything else: no reply at all NO_REPLY_DAYS after applying.
 
 const SEASON_START: Record<string, [month: number, day: number]> = {
   winter: [1, 5],
@@ -15,14 +16,36 @@ const SEASON_START: Record<string, [month: number, day: number]> = {
 const SEASON = "(spring|summer|fall|autumn|winter)";
 const YEAR = "(20\\d{2})";
 
+export const NO_REPLY_DAYS = 60;
+
 export interface GhostDeadline {
   date: string; // YYYY-MM-DD
   label: string; // "Summer 2027"
+  reason: string; // goes in the timeline note
+  rule: "season" | "no_reply";
 }
 
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
-export function ghostDeadline(roleTitle: string, applicationDate: string): GhostDeadline | null {
+export function ghostDeadline(
+  roleTitle: string,
+  applicationDate: string,
+  heardBack = false
+): GhostDeadline | null {
+  const season = seasonDeadline(roleTitle, applicationDate);
+  if (season) return season;
+  if (heardBack) return null; // they replied; only a season end closes it
+  const d = new Date(`${applicationDate}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + NO_REPLY_DAYS);
+  return {
+    date: d.toISOString().slice(0, 10),
+    label: `${NO_REPLY_DAYS} days after applying`,
+    reason: `no reply ${NO_REPLY_DAYS} days after applying`,
+    rule: "no_reply",
+  };
+}
+
+function seasonDeadline(roleTitle: string, applicationDate: string): GhostDeadline | null {
   const role = roleTitle.toLowerCase();
   let season: string | null = null;
   let year: number | null = null;
@@ -54,7 +77,8 @@ export function ghostDeadline(roleTitle: string, applicationDate: string): Ghost
   }
 
   const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  return { date, label: `${cap(season === "autumn" ? "fall" : season)} ${year}` };
+  const label = `${cap(season === "autumn" ? "fall" : season)} ${year}`;
+  return { date, label, reason: `no news by the start of ${label}`, rule: "season" };
 }
 
 const FINISHED = new Set<ApplicationStage>(["offer", "rejected", "ghosted", "withdrawn"]);
@@ -71,10 +95,12 @@ export function findGhostCandidates(
 ): GhostCandidate[] {
   // If an application was ever ghosted and you moved it back, that's your call.
   const everGhosted = new Set(events.filter((e) => e.stage === "ghosted").map((e) => e.application_id));
+  const heardBack = new Set(events.filter((e) => e.stage !== "applied").map((e) => e.application_id));
   const out: GhostCandidate[] = [];
   for (const app of apps) {
     if (FINISHED.has(app.current_stage) || everGhosted.has(app.id)) continue;
-    const deadline = ghostDeadline(app.role_title, app.application_date);
+    const replied = heardBack.has(app.id) || app.current_stage !== "applied";
+    const deadline = ghostDeadline(app.role_title, app.application_date, replied);
     if (deadline && today >= deadline.date) out.push({ id: app.id, deadline });
   }
   return out;

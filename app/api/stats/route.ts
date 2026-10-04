@@ -19,7 +19,7 @@ export async function GET() {
         application_id: c.id,
         stage: "ghosted" as const,
         event_date: now,
-        notes: `Auto-ghosted: no news by the start of ${c.deadline.label}`,
+        notes: `Auto-ghosted: ${c.deadline.reason}`,
       }));
       const { error } = await supabase.from("application_events").insert(rows);
       if (error) throw error;

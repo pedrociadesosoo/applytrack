@@ -17,7 +17,9 @@ export default async function ApplicationDetailPage({
   const application = await getApplication(id);
   if (!application) notFound();
   const events = await getApplicationEvents(id);
-  const deadline = ghostDeadline(application.role_title, application.application_date);
+  const heardBack =
+    application.current_stage !== "applied" || events.some((e) => e.stage !== "applied");
+  const deadline = ghostDeadline(application.role_title, application.application_date, heardBack);
   const ghostsOnOpen =
     deadline && !["offer", "rejected", "ghosted", "withdrawn"].includes(application.current_stage);
 
@@ -99,8 +101,12 @@ export default async function ApplicationDetailPage({
               <p className="text-sm text-neutral-700">{formatDate(deadline.date)}</p>
               <p className="mt-1 text-xs text-neutral-400">
                 {ghostsOnOpen
-                  ? `Moves to Ghosted automatically if there's no outcome by the start of ${deadline.label}.`
-                  : `Start of ${deadline.label}.`}
+                  ? deadline.rule === "season"
+                    ? `Moves to Ghosted automatically if there's no outcome by the start of ${deadline.label}.`
+                    : `Moves to Ghosted automatically if there's still no reply ${deadline.label}.`
+                  : deadline.rule === "season"
+                    ? `Start of ${deadline.label}.`
+                    : deadline.label}
               </p>
             </InfoBlock>
           )}

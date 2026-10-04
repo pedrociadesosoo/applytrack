@@ -177,7 +177,7 @@ export default function DashboardPage() {
         <StatTile
           label="Total applications"
           value={stats ? stats.total.toString() : "—"}
-          caption={stats ? `${stats.total - (stats.byStage.rejected ?? 0) - (stats.byStage.ghosted ?? 0) - (stats.byStage.withdrawn ?? 0)} still open` : undefined}
+          caption={stats ? `${stats.open} still open` : undefined}
         />
         <StatTile
           label="Response rate"

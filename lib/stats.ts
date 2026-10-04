@@ -43,6 +43,7 @@ export interface Outcomes {
 
 export interface DashboardStats {
   total: number;
+  open: number; // still in play: not rejected/ghosted/withdrawn, and no offer decision made
   responded: number;
   responseRate: number;
   interviewed: number;
@@ -66,6 +67,16 @@ const INTERVIEW_STAGES = new Set<ApplicationStage>([
 const CLOSED = new Set<ApplicationStage>(["offer", "rejected", "ghosted", "withdrawn"]);
 const STALE_AFTER_DAYS = 10;
 
+// An offer you've accepted or declined is done; one you're still deciding on
+// is still open.
+export function isOpen(app: Pick<StatsApp, "current_stage" | "offer_decision">): boolean {
+  if (app.current_stage === "rejected" || app.current_stage === "ghosted" || app.current_stage === "withdrawn") {
+    return false;
+  }
+  if (app.current_stage === "offer") return !app.offer_decision || app.offer_decision === "pending";
+  return true;
+}
+
 export function computeStats(apps: StatsApp[], events: StatsEvent[]): DashboardStats {
   const today = new Date().toISOString().slice(0, 10);
   const byApp = new Map<string, StatsEvent[]>();
@@ -80,12 +91,14 @@ export function computeStats(apps: StatsApp[], events: StatsEvent[]): DashboardS
   const outcomes: Outcomes = { offer: 0, inProcess: 0, rejected: 0, wentQuiet: 0, noResponse: 0 };
   const stale: StaleItem[] = [];
   const offerDecisions: Record<OfferDecision, number> = { pending: 0, accepted: 0, declined: 0 };
+  let open = 0;
   let responded = 0;
   let interviewed = 0;
 
   for (const app of apps) {
     byStage[app.current_stage] = (byStage[app.current_stage] ?? 0) + 1;
     if (app.current_stage === "offer") offerDecisions[app.offer_decision ?? "pending"] += 1;
+    if (isOpen(app)) open += 1;
 
     const history = byApp.get(app.id) ?? [];
     const stages = new Set<ApplicationStage>([app.current_stage, ...history.map((e) => e.stage)]);
@@ -124,6 +137,7 @@ export function computeStats(apps: StatsApp[], events: StatsEvent[]): DashboardS
   const total = apps.length;
   return {
     total,
+    open,
     responded,
     responseRate: total ? responded / total : 0,
     interviewed,

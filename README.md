@@ -15,6 +15,7 @@ I was applying to a lot of internships and my spreadsheet kept falling behind. I
   - **Needs follow-up:** applications with no news in 10+ days, longest wait first, with buttons to email the recruiter, set a reminder, or mark it ghosted.
   - **Where things stand:** your pipeline from Applied to Offer. Click a stage to only see those applications.
 - **Auto-ghosting.** If a role says "Summer 2027" and it's June 1, 2027 with no outcome, it moves to Ghosted on its own. Roles without a season get ghosted after 60 days with no reply. Now I can actually see which companies ghost.
+- **Offer decisions.** When you get an offer, mark it as Deciding, Accepted, or Declined in one click. The badge updates everywhere, and once you've accepted or declined, it stops counting as an open application.
 - **Job description archive.** You can save the full job posting with each application, since postings disappear once a role closes. It's searchable, so "SQL" shows every role that asked for SQL.
 - **Four views:** cards, kanban (drag cards between stages), table, and calendar.
 - **Search** that just shows company, role, and status.
@@ -42,6 +43,7 @@ Most trackers make you decide when something is ghosted. I made it a rule based 
 - **Response rate** = applications where the company replied in any way (OA, HireVue, interview, offer, or rejection). A rejection still counts as a reply.
 - **Interview conversion** = applications that reached a live interview (phone screen or later). OAs and HireVues don't count, since you're not talking to a person.
 - **Needs follow-up** = open applications with no news in 10+ days and no reminder already set.
+- **Open** = still in play. Rejected, ghosted, and withdrawn applications are closed, and so is an offer once you've accepted or declined it. An offer you're still deciding on stays open.
 
 ---
 
@@ -105,6 +107,7 @@ Create a Supabase project. In its **SQL Editor**, run these files from the `supa
 4. `migrations/004_gmail_sync.sql`
 5. `migrations/005_hirevue_stage.sql` (run this one by itself)
 6. `migrations/006_progress_view_hirevue.sql`
+7. `migrations/007_offer_decision.sql`
 
 Then copy your **Project URL**, **anon key**, and **service_role key** (Project Settings → API) into `.env.local`.
 

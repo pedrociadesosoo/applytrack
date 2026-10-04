@@ -140,4 +140,12 @@ Open http://localhost:3000 and sign in with Google. On the permission screen, **
 
 ---
 
+## How I built it
+
+I built ApplyTrack with help from **[Claude](https://claude.ai)**, Anthropic's AI assistant, as my coding partner. I decided what the app should do and made the product calls: what counts as a response, when something is ghosted, adding a HireVue stage, and having a review queue instead of auto-guessing. I also tested everything on my real inbox and pointed out what was wrong or confusing. Claude helped me write and debug the code, set up the database and Gmail connection, and test the email sorter.
+
+Working this way taught me a lot about being specific about what you want, checking AI output against real data, and pushing back when something didn't feel right. Those are skills I think matter a lot for building AI products.
+
+---
+
 Built by **Pedrocia (Seddy) De-Sosoo** · Computer Science + MIS @ RIT

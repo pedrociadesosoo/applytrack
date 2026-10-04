@@ -131,8 +131,26 @@ export async function applySignal(
     app = await createFromEmail(supabase, s);
     apps.push(app);
     created = true;
-  } else if (!force && !isForward(app.current_stage, s.stage)) {
-    return { outcome: app.current_stage === s.stage ? "duplicate" : "backward", applicationId: app.id };
+  } else {
+    const { data: events, error: eventsError } = await supabase
+      .from("application_events")
+      .select("stage, event_date")
+      .eq("application_id", app.id);
+    if (eventsError) throw eventsError;
+    const history = (events ?? []) as { stage: ApplicationStage; event_date: string }[];
+
+    // Already in the timeline (reminders, "you've completed it" emails).
+    if (history.some((e) => e.stage === s.stage)) {
+      return { outcome: "duplicate", applicationId: app.id };
+    }
+    // Older than the application's latest event: it fills in history (the
+    // stage trigger won't move current_stage backwards). Only a NEW email
+    // that would move things backwards needs a human.
+    const received = new Date(s.receivedAt).getTime();
+    const isHistory = history.some((e) => new Date(e.event_date).getTime() > received);
+    if (!force && !isHistory && !isForward(app.current_stage, s.stage)) {
+      return { outcome: "backward", applicationId: app.id };
+    }
   }
 
   const subject = s.subject.length > 120 ? `${s.subject.slice(0, 117)}…` : s.subject;

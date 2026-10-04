@@ -13,10 +13,14 @@ export default function KanbanBoard({
   applications,
   onQuickView,
   onStageChange,
+  focusStage,
 }: {
   applications: Application[];
   onQuickView: (application: Application) => void;
   onStageChange: (id: string, stage: ApplicationStage) => void;
+  // Set when the dashboard is filtered to one stage: show just that column,
+  // laid out as a full-width grid instead of a narrow lane.
+  focusStage?: ApplicationStage;
 }) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverStage, setDragOverStage] = useState<ApplicationStage | null>(null);
@@ -29,14 +33,14 @@ export default function KanbanBoard({
   }
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4">
-      {COLUMN_STAGES.map((stage) => {
+    <div className={focusStage ? "pb-4" : "flex gap-4 overflow-x-auto pb-4"}>
+      {(focusStage ? [focusStage] : COLUMN_STAGES).map((stage) => {
         const items = byStage.get(stage) ?? [];
         const isOver = dragOverStage === stage;
         return (
           <div
             key={stage}
-            className={`flex w-72 flex-shrink-0 flex-col rounded-xl border bg-neutral-50/60 transition-colors ${
+            className={`flex ${focusStage ? "w-full" : "w-72 flex-shrink-0"} flex-col rounded-xl border bg-neutral-50/60 transition-colors ${
               isOver ? "border-indigo-300 bg-indigo-50/60" : "border-neutral-200"
             }`}
             onDragOver={(e) => {
@@ -61,7 +65,13 @@ export default function KanbanBoard({
               </span>
             </div>
 
-            <div className="flex-1 space-y-2 p-2">
+            <div
+              className={
+                focusStage
+                  ? "grid flex-1 grid-cols-1 gap-2 p-2 sm:grid-cols-2 lg:grid-cols-3"
+                  : "flex-1 space-y-2 p-2"
+              }
+            >
               {items.length === 0 && (
                 <p className="px-2 py-4 text-center text-xs text-neutral-300">No applications</p>
               )}

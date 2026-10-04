@@ -6,6 +6,7 @@ import { formatDate, relativeTime } from "@/lib/format";
 import StageBadge from "@/components/StageBadge";
 import JDReadingView from "@/components/JDReadingView";
 import DeleteApplicationButton from "@/components/DeleteApplicationButton";
+import { ghostDeadline } from "@/lib/ghosting";
 
 export default async function ApplicationDetailPage({
   params,
@@ -16,6 +17,9 @@ export default async function ApplicationDetailPage({
   const application = await getApplication(id);
   if (!application) notFound();
   const events = await getApplicationEvents(id);
+  const deadline = ghostDeadline(application.role_title, application.application_date);
+  const ghostsOnOpen =
+    deadline && !["offer", "rejected", "ghosted", "withdrawn"].includes(application.current_stage);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -90,6 +94,16 @@ export default async function ApplicationDetailPage({
         </div>
 
         <aside className="space-y-4">
+          {deadline && (
+            <InfoBlock title="Ghost date">
+              <p className="text-sm text-neutral-700">{formatDate(deadline.date)}</p>
+              <p className="mt-1 text-xs text-neutral-400">
+                {ghostsOnOpen
+                  ? `Moves to Ghosted automatically if there's no outcome by the start of ${deadline.label}.`
+                  : `Start of ${deadline.label}.`}
+              </p>
+            </InfoBlock>
+          )}
           <InfoBlock title="Next action">
             <p className="text-sm text-neutral-700">{application.next_action || "—"}</p>
             {application.next_action_date && (

@@ -9,7 +9,12 @@ import SearchFilterBar from "@/components/SearchFilterBar";
 import KanbanBoard from "@/components/KanbanBoard";
 import ApplicationsTable from "@/components/ApplicationsTable";
 import CalendarView from "@/components/CalendarView";
-import StageBreakdown from "@/components/StageBreakdown";
+import PipelineOverview from "@/components/PipelineOverview";
+import StatTile from "@/components/StatTile";
+import Drawer from "@/components/Drawer";
+import ResponseBreakdown from "@/components/ResponseBreakdown";
+import StaleList from "@/components/StaleList";
+import SearchResults from "@/components/SearchResults";
 import GmailSyncButton from "@/components/GmailSyncButton";
 import type { DashboardStats } from "@/lib/stats";
 import { useLocalStorage } from "@/lib/use-local-storage";
@@ -37,6 +42,7 @@ export default function DashboardPage() {
   const [statsVersion, setStatsVersion] = useState(0);
   const [listVersion, setListVersion] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+  const [panel, setPanel] = useState<"response" | "stale" | null>(null);
   const refreshStats = () => setStatsVersion((v) => v + 1);
 
   useEffect(() => {
@@ -168,18 +174,35 @@ export default function DashboardPage() {
       )}
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Total applications" value={stats ? stats.total.toString() : "—"} />
-        <StatCard label="Response rate" value={stats ? formatPct(stats.responseRate) : "—"} />
-        <StatCard
+        <StatTile
+          label="Total applications"
+          value={stats ? stats.total.toString() : "—"}
+          caption={stats ? `${stats.total - (stats.byStage.rejected ?? 0) - (stats.byStage.ghosted ?? 0) - (stats.byStage.withdrawn ?? 0)} still open` : undefined}
+        />
+        <StatTile
+          label="Response rate"
+          value={stats ? formatPct(stats.responseRate) : "—"}
+          caption={stats ? `${stats.responded} heard back` : undefined}
+          onClick={stats ? () => setPanel("response") : undefined}
+        />
+        <StatTile
           label="Interview conversion"
           value={stats ? formatPct(stats.interviewConversionRate) : "—"}
+          caption={stats ? `${stats.interviewed} reached interviews` : undefined}
+          onClick={stats ? () => setPanel("response") : undefined}
         />
-        <StatCard label="Stale (needs follow-up)" value={stats ? stats.staleCount.toString() : "—"} />
+        <StatTile
+          label="Needs follow-up"
+          value={stats ? stats.staleCount.toString() : "—"}
+          caption="quiet 10+ days"
+          tone={stats && stats.staleCount > 0 ? "attention" : "default"}
+          onClick={stats ? () => setPanel("stale") : undefined}
+        />
       </div>
 
       {stats && (
         <div className="mt-4">
-          <StageBreakdown stats={stats} />
+          <PipelineOverview byStage={stats.byStage} selected={stage} onSelect={setStage} />
         </div>
       )}
 
@@ -213,7 +236,10 @@ export default function DashboardPage() {
         {loading && view === "table" && <TableSkeleton />}
         {loading && view === "calendar" && <CalendarSkeleton />}
         {error && <p className="text-sm text-rose-600">{error}</p>}
-        {!loading && !error && applications.length === 0 && (
+        {!loading && !error && search.trim() && (
+          <SearchResults query={search.trim()} applications={applications} onOpen={setQuickView} />
+        )}
+        {!loading && !error && !search.trim() && applications.length === 0 && (
           <div className="rounded-xl border border-dashed border-neutral-200 py-16 text-center">
             <p className="text-sm text-neutral-500">No applications yet.</p>
             <Link
@@ -225,7 +251,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {!loading && !error && applications.length > 0 && (
+        {!loading && !error && !search.trim() && applications.length > 0 && (
           <>
             {view === "cards" && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -239,6 +265,7 @@ export default function DashboardPage() {
                 applications={applications}
                 onQuickView={setQuickView}
                 onStageChange={handleStageChange}
+                focusStage={(stage || undefined) as ApplicationStage | undefined}
               />
             )}
             {view === "table" && (
@@ -252,15 +279,32 @@ export default function DashboardPage() {
       </div>
 
       <JDSlideOver application={quickView} onClose={() => setQuickView(null)} />
-    </div>
-  );
-}
 
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-neutral-900">{value}</p>
+      <Drawer
+        open={panel === "response" && !!stats}
+        title="Response rate, explained"
+        subtitle="Where that percentage comes from"
+        onClose={() => setPanel(null)}
+      >
+        {stats && <ResponseBreakdown stats={stats} />}
+      </Drawer>
+
+      <Drawer
+        open={panel === "stale" && !!stats}
+        title="Needs follow-up"
+        subtitle={stats ? `${stats.staleCount} open application${stats.staleCount === 1 ? "" : "s"} with no news in 10+ days` : undefined}
+        onClose={() => setPanel(null)}
+      >
+        {stats && (
+          <StaleList
+            items={stats.stale}
+            onChanged={() => {
+              refreshStats();
+              setListVersion((v) => v + 1);
+            }}
+          />
+        )}
+      </Drawer>
     </div>
   );
 }

@@ -109,14 +109,6 @@ export type ApplicationInput = Omit<
   "id" | "user_id" | "created_at" | "updated_at"
 >;
 
-export interface ApplicationProgress {
-  application_id: string;
-  current_stage: ApplicationStage;
-  next_action_date: string | null;
-  got_response: boolean;
-  reached_interview: boolean;
-  last_activity_at: string;
-}
 
 export interface EmailSignal {
   id: string;

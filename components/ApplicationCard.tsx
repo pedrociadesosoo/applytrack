@@ -35,7 +35,7 @@ export default function ApplicationCard({
             {application.role_title}
           </Link>
         </div>
-        <StageBadge stage={application.current_stage} />
+        <StageBadge stage={application.current_stage} decision={application.offer_decision} />
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500">

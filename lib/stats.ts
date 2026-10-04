@@ -1,4 +1,4 @@
-import type { ApplicationStage } from "@/lib/types";
+import type { ApplicationStage, OfferDecision } from "@/lib/types";
 import { daysSince } from "@/lib/format";
 
 // Everything on the dashboard's stat row, computed from each application's
@@ -13,6 +13,7 @@ export interface StatsApp {
   next_action_date: string | null;
   contact_email: string | null;
   application_date: string;
+  offer_decision: OfferDecision | null;
   created_at: string;
 }
 
@@ -51,6 +52,7 @@ export interface DashboardStats {
   byStage: Record<string, number>; // current stage counts
   outcomes: Outcomes; // sums to total; the responded part explains responseRate
   reached: Record<string, number>; // apps that ever reached each response stage
+  offerDecisions: Record<OfferDecision, number>; // among apps currently at "offer"
 }
 
 // Hearing anything back from the company, including a rejection.
@@ -77,11 +79,13 @@ export function computeStats(apps: StatsApp[], events: StatsEvent[]): DashboardS
   const reached: Record<string, number> = Object.fromEntries(RESPONSE_STAGES.map((s) => [s, 0]));
   const outcomes: Outcomes = { offer: 0, inProcess: 0, rejected: 0, wentQuiet: 0, noResponse: 0 };
   const stale: StaleItem[] = [];
+  const offerDecisions: Record<OfferDecision, number> = { pending: 0, accepted: 0, declined: 0 };
   let responded = 0;
   let interviewed = 0;
 
   for (const app of apps) {
     byStage[app.current_stage] = (byStage[app.current_stage] ?? 0) + 1;
+    if (app.current_stage === "offer") offerDecisions[app.offer_decision ?? "pending"] += 1;
 
     const history = byApp.get(app.id) ?? [];
     const stages = new Set<ApplicationStage>([app.current_stage, ...history.map((e) => e.stage)]);
@@ -129,5 +133,6 @@ export function computeStats(apps: StatsApp[], events: StatsEvent[]): DashboardS
     byStage,
     outcomes,
     reached,
+    offerDecisions,
   };
 }

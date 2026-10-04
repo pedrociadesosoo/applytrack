@@ -202,7 +202,12 @@ export default function DashboardPage() {
 
       {stats && (
         <div className="mt-4">
-          <PipelineOverview byStage={stats.byStage} selected={stage} onSelect={setStage} />
+          <PipelineOverview
+            byStage={stats.byStage}
+            offerDecisions={stats.offerDecisions}
+            selected={stage}
+            onSelect={setStage}
+          />
         </div>
       )}
 

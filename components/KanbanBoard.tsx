@@ -95,7 +95,13 @@ export default function KanbanBoard({
                   </p>
                   <div className="mt-2 flex items-center justify-between text-[11px] text-neutral-400">
                     <span>{daysSince(app.updated_at)}d since update</span>
-                    {app.next_action_date && <span>Due {formatDate(app.next_action_date)}</span>}
+                    {app.current_stage === "offer" && app.offer_decision && app.offer_decision !== "pending" ? (
+                      <span className={app.offer_decision === "accepted" ? "font-medium text-emerald-700" : ""}>
+                        {app.offer_decision === "accepted" ? "✓ Accepted" : "Declined"}
+                      </span>
+                    ) : (
+                      app.next_action_date && <span>Due {formatDate(app.next_action_date)}</span>
+                    )}
                   </div>
 
                   {/* Drag-and-drop doesn't work on touch devices, so this select is the

@@ -82,7 +82,7 @@ export default function ApplicationsTable({
                 </td>
                 <td className="px-4 py-2.5">
                   <div className="flex items-center gap-2">
-                    <StageBadge stage={app.current_stage} />
+                    <StageBadge stage={app.current_stage} decision={app.offer_decision} />
                     {stale && <span className="text-[10px] font-semibold text-orange-500">STALE</span>}
                   </div>
                 </td>

@@ -42,7 +42,7 @@ export default function SearchResults({
                 updated {relativeTime(app.updated_at)}
               </span>
               <span className="shrink-0">
-                <StageBadge stage={app.current_stage} />
+                <StageBadge stage={app.current_stage} decision={app.offer_decision} />
               </span>
             </button>
           </li>

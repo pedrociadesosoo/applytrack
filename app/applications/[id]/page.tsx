@@ -7,6 +7,7 @@ import StageBadge from "@/components/StageBadge";
 import JDReadingView from "@/components/JDReadingView";
 import DeleteApplicationButton from "@/components/DeleteApplicationButton";
 import { ghostDeadline } from "@/lib/ghosting";
+import OfferDecisionPicker from "@/components/OfferDecisionPicker";
 
 export default async function ApplicationDetailPage({
   params,
@@ -38,7 +39,7 @@ export default async function ApplicationDetailPage({
             {application.role_title}
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <StageBadge stage={application.current_stage} />
+            <StageBadge stage={application.current_stage} decision={application.offer_decision} />
             <span className="text-xs text-neutral-400">
               {SOURCE_LABELS[application.source]} · Applied {formatDate(application.application_date)}
             </span>
@@ -96,6 +97,11 @@ export default async function ApplicationDetailPage({
         </div>
 
         <aside className="space-y-4">
+          {application.current_stage === "offer" && (
+            <InfoBlock title="Offer decision">
+              <OfferDecisionPicker applicationId={application.id} initial={application.offer_decision} />
+            </InfoBlock>
+          )}
           {deadline && (
             <InfoBlock title="Ghost date">
               <p className="text-sm text-neutral-700">{formatDate(deadline.date)}</p>

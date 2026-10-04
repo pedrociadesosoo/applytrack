@@ -145,7 +145,7 @@ export default function CalendarView({
                       <span className="text-neutral-700">
                         {event.application.company} — {event.label}
                       </span>
-                      <StageBadge stage={event.application.current_stage} />
+                      <StageBadge stage={event.application.current_stage} decision={event.application.offer_decision} />
                     </button>
                   </li>
                 ))}

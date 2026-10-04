@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Application, ApplicationInput } from "@/lib/types";
-import { STAGE_ORDER, STAGE_LABELS, SOURCE_LABELS } from "@/lib/types";
+import { STAGE_ORDER, STAGE_LABELS, SOURCE_LABELS, OFFER_DECISION_LABELS } from "@/lib/types";
+import type { OfferDecision } from "@/lib/types";
 
 const SOURCE_OPTIONS = Object.keys(SOURCE_LABELS) as (keyof typeof SOURCE_LABELS)[];
 
@@ -23,6 +24,7 @@ function toInput(app?: Partial<Application>): ApplicationInput {
     contact_name: app?.contact_name ?? "",
     contact_email: app?.contact_email ?? "",
     confidence_rating: app?.confidence_rating ?? null,
+    offer_decision: app?.offer_decision ?? null,
   };
 }
 
@@ -59,6 +61,7 @@ export default function ApplicationForm({
       cover_letter_used: form.cover_letter_used || null,
       contact_name: form.contact_name || null,
       contact_email: form.contact_email || null,
+      offer_decision: form.current_stage === "offer" ? form.offer_decision ?? "pending" : form.offer_decision,
     };
 
     try {
@@ -146,6 +149,22 @@ export default function ApplicationForm({
             ))}
           </select>
         </div>
+        {form.current_stage === "offer" && (
+          <div>
+            <label className={labelClass}>Offer decision</label>
+            <select
+              className={inputClass}
+              value={form.offer_decision ?? "pending"}
+              onChange={(e) => update("offer_decision", e.target.value as OfferDecision)}
+            >
+              {(Object.keys(OFFER_DECISION_LABELS) as OfferDecision[]).map((d) => (
+                <option key={d} value={d}>
+                  {OFFER_DECISION_LABELS[d]}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <div>
           <label className={labelClass}>Job posting URL</label>
           <input

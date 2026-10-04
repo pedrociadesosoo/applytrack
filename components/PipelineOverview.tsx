@@ -1,6 +1,6 @@
 "use client";
 
-import type { ApplicationStage } from "@/lib/types";
+import type { ApplicationStage, OfferDecision } from "@/lib/types";
 import { STAGE_LABELS } from "@/lib/types";
 import { NO_REPLY_DAYS } from "@/lib/ghosting";
 
@@ -21,10 +21,12 @@ const SHORT: Partial<Record<ApplicationStage, string>> = {
 
 export default function PipelineOverview({
   byStage,
+  offerDecisions,
   selected,
   onSelect,
 }: {
   byStage: Record<string, number>;
+  offerDecisions?: Record<OfferDecision, number>;
   selected: string;
   onSelect: (stage: string) => void;
 }) {
@@ -67,6 +69,17 @@ export default function PipelineOverview({
                 <span className={`mt-0.5 text-xl font-semibold ${count ? "text-neutral-900" : "text-neutral-300"}`}>
                   {count}
                 </span>
+                {stage === "offer" && offerDecisions && count > 0 && (
+                  <span className="mt-0.5 text-[10px] leading-tight text-neutral-500">
+                    {[
+                      offerDecisions.accepted && `${offerDecisions.accepted} accepted`,
+                      offerDecisions.declined && `${offerDecisions.declined} declined`,
+                      offerDecisions.pending && `${offerDecisions.pending} deciding`,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </span>
+                )}
                 <span className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100">
                   <span
                     className="block h-full rounded-full transition-all"

@@ -91,6 +91,12 @@ export default function ResponseBreakdown({ stats }: { stats: DashboardStats }) 
                     </td>
                     <td className="w-full py-2 text-neutral-800">
                       {seg.label}
+                      {seg.key === "offer" && outcomes.offer > 0 && (
+                        <span className="ml-1.5 text-xs text-neutral-400">
+                          ({stats.offerDecisions.accepted} accepted · {stats.offerDecisions.declined} declined ·{" "}
+                          {stats.offerDecisions.pending} deciding)
+                        </span>
+                      )}
                       {!seg.heardBack && <span className="ml-1.5 text-xs text-neutral-400">(not counted)</span>}
                     </td>
                     <td className="py-2 pl-4 text-right font-semibold tabular-nums text-neutral-900">{outcomes[seg.key]}</td>

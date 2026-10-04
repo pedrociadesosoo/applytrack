@@ -73,6 +73,14 @@ export const SOURCE_LABELS: Record<ApplicationSource, string> = {
   other: "Other",
 };
 
+export type OfferDecision = "pending" | "accepted" | "declined";
+
+export const OFFER_DECISION_LABELS: Record<OfferDecision, string> = {
+  pending: "Deciding",
+  accepted: "Accepted",
+  declined: "Declined",
+};
+
 export interface Application {
   id: string;
   user_id: string | null;
@@ -90,6 +98,7 @@ export interface Application {
   contact_name: string | null;
   contact_email: string | null;
   confidence_rating: number | null;
+  offer_decision: OfferDecision | null; // only meaningful at the "offer" stage
   created_at: string;
   updated_at: string;
 }

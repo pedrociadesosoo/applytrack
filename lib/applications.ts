@@ -118,7 +118,7 @@ export async function listForStats(): Promise<{ apps: StatsApp[]; events: StatsE
   const [apps, events] = await Promise.all([
     all<StatsApp>(
       "applications",
-      "id, company, role_title, current_stage, next_action, next_action_date, contact_email, application_date, created_at"
+      "id, company, role_title, current_stage, next_action, next_action_date, contact_email, application_date, offer_decision, created_at"
     ),
     all<StatsEvent>("application_events", "application_id, stage, event_date"),
   ]);

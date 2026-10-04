@@ -40,7 +40,7 @@ export default function JDSlideOver({
               {application.role_title}
             </h2>
             <div className="mt-2 flex items-center gap-2">
-              <StageBadge stage={application.current_stage} />
+              <StageBadge stage={application.current_stage} decision={application.offer_decision} />
               <span className="text-xs text-neutral-400">
                 Applied {formatDate(application.application_date)}
               </span>

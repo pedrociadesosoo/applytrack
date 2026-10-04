@@ -1,6 +1,7 @@
 export type ApplicationStage =
   | "applied"
   | "oa"
+  | "hirevue"
   | "phone_screen"
   | "behavioral"
   | "technical_interview"
@@ -22,6 +23,7 @@ export type ApplicationSource =
 export const STAGE_ORDER: ApplicationStage[] = [
   "applied",
   "oa",
+  "hirevue",
   "phone_screen",
   "behavioral",
   "technical_interview",
@@ -35,6 +37,7 @@ export const STAGE_ORDER: ApplicationStage[] = [
 export const STAGE_LABELS: Record<ApplicationStage, string> = {
   applied: "Applied",
   oa: "OA",
+  hirevue: "HireVue",
   phone_screen: "Phone Screen",
   behavioral: "Behavioral",
   technical_interview: "Technical Interview",
@@ -49,6 +52,7 @@ export const STAGE_LABELS: Record<ApplicationStage, string> = {
 export const STAGE_COLORS: Record<ApplicationStage, string> = {
   applied: "bg-slate-100 text-slate-700 border-slate-200",
   oa: "bg-amber-100 text-amber-800 border-amber-200",
+  hirevue: "bg-teal-100 text-teal-800 border-teal-200",
   phone_screen: "bg-sky-100 text-sky-800 border-sky-200",
   behavioral: "bg-violet-100 text-violet-800 border-violet-200",
   technical_interview: "bg-indigo-100 text-indigo-800 border-indigo-200",
@@ -112,4 +116,21 @@ export interface ApplicationProgress {
   got_response: boolean;
   reached_interview: boolean;
   last_activity_at: string;
+}
+
+export interface EmailSignal {
+  id: string;
+  gmail_message_id: string;
+  from_header: string | null;
+  subject: string | null;
+  snippet: string | null;
+  received_at: string;
+  kind: "applied" | "stage" | "unrelated";
+  suggested_stage: ApplicationStage | null;
+  company_guess: string | null;
+  role_guess: string | null;
+  confidence: "high" | "low";
+  reason: string | null;
+  status: string;
+  application_id: string | null;
 }

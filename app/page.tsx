@@ -10,6 +10,7 @@ import KanbanBoard from "@/components/KanbanBoard";
 import ApplicationsTable from "@/components/ApplicationsTable";
 import CalendarView from "@/components/CalendarView";
 import StageBreakdown from "@/components/StageBreakdown";
+import GmailSyncButton from "@/components/GmailSyncButton";
 import type { DashboardStats } from "@/lib/stats";
 import { useLocalStorage } from "@/lib/use-local-storage";
 import { CardsSkeleton, KanbanSkeleton, TableSkeleton, CalendarSkeleton } from "@/components/Skeletons";
@@ -34,6 +35,8 @@ export default function DashboardPage() {
   // current search/filter), using each app's full stage history. Bumping
   // statsVersion refetches them after a stage change.
   const [statsVersion, setStatsVersion] = useState(0);
+  const [listVersion, setListVersion] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
   const refreshStats = () => setStatsVersion((v) => v + 1);
 
   useEffect(() => {
@@ -46,6 +49,12 @@ export default function DashboardPage() {
       .catch(() => {
         // Stats are non-critical; the list still renders without them.
       });
+    fetch("/api/review")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && !data.error) setReviewCount(data.signals.length);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -95,7 +104,7 @@ export default function DashboardPage() {
       cancelled = true;
       controller.abort();
     };
-  }, [search, stage]);
+  }, [search, stage, listVersion]);
 
   async function handleStageChange(id: string, newStage: ApplicationStage) {
     // Optimistic update so kanban drag feels instant.
@@ -127,16 +136,36 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-xl font-semibold text-neutral-900">Applications</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Every application, in one place — auto-tracked once Gmail sync (Phase 3) ships.
+            Every application, in one place — auto-tracked from your Gmail.
           </p>
         </div>
-        <Link
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+          <GmailSyncButton
+            onSynced={() => {
+              setListVersion((v) => v + 1);
+              refreshStats();
+            }}
+          />
+          <Link
           href="/applications/new"
           className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
         >
           + Add application
-        </Link>
+          </Link>
+        </div>
       </div>
+
+      {reviewCount > 0 && (
+        <Link
+          href="/review"
+          className="mt-4 flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800 hover:bg-amber-100"
+        >
+          <span>
+            {reviewCount} email{reviewCount === 1 ? "" : "s"} need{reviewCount === 1 ? "s" : ""} a quick review
+          </span>
+          <span aria-hidden>→</span>
+        </Link>
+      )}
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard label="Total applications" value={stats ? stats.total.toString() : "—"} />

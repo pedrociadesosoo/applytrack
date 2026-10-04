@@ -8,7 +8,7 @@ export interface ListFilters {
 }
 
 export async function listApplications(filters: ListFilters = {}): Promise<Application[]> {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   let query = supabase
     .from("applications")
     .select("*")
@@ -35,7 +35,7 @@ export async function listApplications(filters: ListFilters = {}): Promise<Appli
 }
 
 export async function getApplication(id: string): Promise<Application | null> {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("applications")
     .select("*")
@@ -46,7 +46,7 @@ export async function getApplication(id: string): Promise<Application | null> {
 }
 
 export async function getApplicationEvents(applicationId: string): Promise<ApplicationEvent[]> {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("application_events")
     .select("*")
@@ -57,7 +57,7 @@ export async function getApplicationEvents(applicationId: string): Promise<Appli
 }
 
 export async function createApplication(input: ApplicationInput): Promise<Application> {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("applications")
     .insert(input)
@@ -71,7 +71,7 @@ export async function updateApplication(
   id: string,
   input: Partial<ApplicationInput>
 ): Promise<Application> {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
 
   // Stage changes are logged to application_events by a Postgres trigger
   // (migration 002), so this stays a single atomic write.
@@ -86,7 +86,7 @@ export async function updateApplication(
 }
 
 export async function deleteApplication(id: string): Promise<void> {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("applications").delete().eq("id", id);
   if (error) throw error;
 }
@@ -95,7 +95,7 @@ export async function deleteApplication(id: string): Promise<void> {
 // history. Always unfiltered: dashboard stats describe the whole search,
 // not whatever the search box currently matches.
 export async function listProgress(): Promise<ApplicationProgress[]> {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.from("application_progress").select("*");
   if (error) throw error;
   return data ?? [];

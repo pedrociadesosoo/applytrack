@@ -1,116 +1,143 @@
 # ApplyTrack
 
-**A job-search analytics platform, not a spreadsheet.** ApplyTrack treats the job hunt like a funnel: every application is an event stream (`applied → OA → phone screen → interview → offer/reject/ghost`), and the product's job is to keep that funnel accurate with as little manual upkeep as possible — eventually by reading the signal that's already sitting in your inbox.
+**A job application tracker that updates itself from your Gmail.**
+
+I was applying to a lot of internships and my spreadsheet kept falling behind. I'd get an OA invite or a rejection email and forget to update the row. So I built ApplyTrack. It reads my job emails, adds new applications on its own, and moves each one through the stages (applied → OA → HireVue → interviews → offer or rejection). I just open the dashboard and see where everything stands.
 
 ---
 
-## The problem
+## What it does
 
-Tracking applications in a spreadsheet breaks down fast once volume goes up: status goes stale the moment you forget to update a row, job postings vanish from the internet the day a role closes (so there's no record of what you actually applied to or what it asked for), and there's no way to answer questions like *"am I converting better on referrals or cold applications?"* or *"where in the pipeline do I actually stall out?"* without doing the analysis by hand.
-
-**Target user:** a student or early-career candidate running a high-volume search (10s–100s of live applications at once) who wants pipeline visibility without manually re-entering the same status update they already got in an email.
-
-**What "done" looks like:** open the dashboard, immediately see what needs attention today, and trust that the stage shown for each application reflects reality — because it was either entered once at apply-time or picked up automatically from Gmail, not hand-maintained.
-
----
-
-## Product decisions worth calling out
-
-A few choices that shaped the build, and the reasoning behind them:
-
-- **Human-in-the-loop over full automation.** Email classification (Phase 3) will misfire sometimes — a rejection email that's actually a newsletter, a "your application was received" that's really an OA invite. Rather than auto-writing stage changes, flagged emails land in a review queue ("Claude thinks this means X — confirm or correct"). Slower than full automation, but it's the difference between a tool you trust and one you have to double-check.
-- **The job description is the source of truth, archived at apply-time.** Postings disappear once a role closes or fills, which means the JD is often the *only* record of what a role actually asked for. It's saved permanently on the application record rather than linked out to, and it's full-text searchable (`search_vector` in the schema) so "every role that mentioned SQL" is a real query, not a manual scan.
-- **Permissive RLS now, tightened later — documented, not hidden.** Phase 1 ships before auth does, so `supabase/schema.sql` has row-level security *enabled* but with an intentionally open policy, commented inline as temporary and scoped to flip to `auth.uid() = user_id` once Google OAuth lands in Phase 3. Technical debt that isn't written down is the kind that bites later.
-- **The event log is the source of truth, enforced in the database.** Every stage change is a row in `application_events`, and Postgres triggers keep `current_stage` in sync in both directions: a manual edit or kanban drag logs an event, and inserting an event (which is how Gmail sync writes, with `source_email_id` attached) moves the application. Each change is one atomic write, and events that arrive out of order (e.g. a backfill of old emails) never move an application backwards.
-- **Funnel stats use the full history, not the current stage.** An application rejected after an onsite still counts as an interview. The `application_progress` view computes "ever got a response" / "ever reached an interview" per application, and stats always cover the whole search rather than whatever the search box matches.
+- **Gmail sync.** Click "Sync Gmail" and it scans your inbox for job emails. A "thanks for applying" email creates a new application. OA invites, HireVue invites, interview emails, offers, and rejections move the right application to the right stage.
+- **Review queue.** If the app isn't sure about an email, it doesn't guess. It puts the email in a review list where you can fix the company, role, or stage and confirm it, or dismiss it.
+- **Dashboard you can click into.**
+  - **Response rate:** click it to see a breakdown of where every application stands (offer, in process, rejected, went quiet, no response) and how many ever got an OA, HireVue, interview, offer, or rejection.
+  - **Needs follow-up:** applications with no news in 10+ days, longest wait first, with buttons to email the recruiter, set a reminder, or mark it ghosted.
+  - **Where things stand:** your pipeline from Applied to Offer. Click a stage to only see those applications.
+- **Auto-ghosting.** If a role says "Summer 2027" and it's June 1, 2027 with no outcome, it moves to Ghosted on its own. Roles without a season get ghosted after 60 days with no reply. Now I can actually see which companies ghost.
+- **Job description archive.** You can save the full job posting with each application, since postings disappear once a role closes. It's searchable, so "SQL" shows every role that asked for SQL.
+- **Four views:** cards, kanban (drag cards between stages), table, and calendar.
+- **Search** that just shows company, role, and status.
 
 ---
 
-## Feature set
+## The PM side: decisions I made and why
 
-| Area | What it does |
-|---|---|
-| **Application CRUD** | Add/edit/delete applications with company, role, source, stage, next action, resume/cover-letter version, and recruiter contact. |
-| **JD archive** | Full job description saved permanently per application; auto-parsed into sections (Responsibilities / Qualifications / About) when the source text has detectable headers; full-text searchable across every saved posting; quick-view slide-over from the dashboard card. |
-| **Dashboard & stats** | Response rate, interview conversion rate, and a stale-application count computed live from the current data — the start of the analytics layer, not a static readme claim. |
-| **Gmail auto-tracking** *(Phase 3)* | Read-only Gmail sync that makes manual entry the exception: "thanks for applying" confirmations create the application automatically, and later emails (OA invites, interview scheduling, rejections) move it through the pipeline. Claude-based classification, with low-confidence calls landing in a confirm/correct review queue. |
-| **AI follow-up assistant** *(Phase 4)* | Daily "what needs attention" panel, drafted (never auto-sent) follow-up emails, and a pre-interview prep brief generated from the saved JD. |
-| **Creative extras** *(Phase 5)* | Stage-progression timeline visualization, auto-fetched company logos, a private 1–5 confidence rating per interview stage, shareable "companies I've interviewed with" page. |
+**1. Ask instead of guess.**
+Email is messy. A confirmation email might say "if selected, you'll get an online assessment," which isn't an OA invite. If the app guessed wrong it would quietly mess up my data, and then I wouldn't trust any of it. So clear emails get handled automatically and unclear ones go to the review queue. It's a little slower, but I trust what I see.
+
+**2. Start free, add AI later.**
+I could have used an AI model to read every email, but that costs money on every sync. I started with keyword and sender rules (free) and sent anything unclear to the review queue. AI can be added later for just the unclear emails, without changing the rest of the app.
+
+**3. Applications only move forward.**
+Companies send reminder emails. A "reminder: finish your OA" email shouldn't move me back to OA after I've already had a phone screen. So emails can only move an application forward. If an email would move one backwards, I decide.
+
+**4. Use my own data to find what was missing.**
+After my first real sync I checked what got sorted wrong. Video interviews (HireVue and similar) were getting labeled as OAs, phone screens, and even onsites. So I added **HireVue** as its own stage, and the next sync sorted all of them correctly. Same thing with company names: "Bofa" and "Bank of America" were showing up as two different companies, so I added a list of common short names.
+
+**5. "Ghosted" should mean something.**
+Most trackers make you decide when something is ghosted. I made it a rule based on the role's season, plus a 60-day rule for everything else, so ghosting is consistent and I can compare companies fairly. If you move something out of Ghosted yourself, the app respects that and doesn't ghost it again.
+
+**6. Clear definitions for the numbers.**
+- **Response rate** = applications where the company replied in any way (OA, HireVue, interview, offer, or rejection). A rejection still counts as a reply.
+- **Interview conversion** = applications that reached a live interview (phone screen or later). OAs and HireVues don't count, since you're not talking to a person.
+- **Needs follow-up** = open applications with no news in 10+ days and no reminder already set.
 
 ---
 
-## Architecture
+## The data side
+
+**Every stage change is saved, not just the current stage.**
+The main tables are `applications` (one row per application) and `application_events` (every stage change with a date). Database triggers keep them in sync. If you drag a card on the kanban, an event gets logged. If the Gmail sync adds an event, the application's stage updates. This history is what makes the stats honest. For example, an application that got rejected after an onsite still counts as reaching an interview.
+
+**Emails get sorted with rules I tested.**
+The email sorter (`lib/gmail/classify.ts`) checks for rejections and offers first, then looks at the subject line, then the body. It figures out the company from the subject, the sender name, or the sender's email domain. I tested it on 15 sample emails covering confirmations, OAs, interviews, offers, rejections, and job alerts, then tuned it on real emails from my own inbox.
+
+**Old emails fill in history.**
+The first sync goes back to August 1 and reads emails oldest first. Older emails get added to an application's history without changing its current stage, and each email is only ever counted once.
+
+**Privacy.**
+The app only gets read-only Gmail access. Each user can only see their own data. That's enforced in the database with row-level security, not just in the app.
+
+---
+
+## How it's built
 
 ```
-Next.js (App Router, TS)
-  ├─ app/                    UI routes (dashboard, application detail/new/edit)
-  ├─ app/api/applications/   REST-style API routes (server-side Supabase client)
-  ├─ lib/applications.ts     Data access layer — the only place that talks to Postgres
-  ├─ lib/supabase/           Browser + server Supabase clients
-  └─ components/             Presentational + form components
+Next.js app (TypeScript, Tailwind)
+  ├─ app/                    pages: dashboard, review queue, application details
+  ├─ app/api/                API routes: applications, stats, Gmail sync, review
+  ├─ lib/gmail/              Gmail client, email sorter, sync logic
+  ├─ lib/stats.ts            how the dashboard numbers are calculated
+  ├─ lib/ghosting.ts         auto-ghost rules
+  └─ components/             dashboard pieces (pipeline, charts, panels)
 
 Supabase (Postgres)
-  ├─ applications            One row per application; job_description archived here
-  ├─ application_events      Append-only stage history, auto-populated via trigger
-  └─ search_vector            Generated tsvector column, GIN-indexed for JD search
+  ├─ applications            one row per application
+  ├─ application_events      every stage change, with dates
+  ├─ email_signals           every email the sync looked at, and what it decided
+  └─ google_credentials      Gmail access tokens (server-only)
 ```
 
-**Data model (Phase 1):**
+**Tech stack:** Next.js 16, React 19, TypeScript, Tailwind CSS 4, Supabase (Postgres + Auth), Google OAuth, Gmail API.
 
+---
+
+## Run your own copy
+
+Want to use it for your own search? Here's how to set it up. It's free, and takes about 20 minutes.
+
+**You'll need:** [Node.js](https://nodejs.org) (v20 or newer), a free [Supabase](https://supabase.com) account, and a Google account.
+
+**1. Get the code**
+```bash
+git clone https://github.com/pedrociadesosoo/applytrack.git
+cd applytrack
+npm install
+cp .env.example .env.local
 ```
-applications (1) ───< application_events (many)
-  id, company, role_title, application_date, source,
-  current_stage, next_action[_date], job_description,
-  job_post_url, resume_version_used, cover_letter_used,
-  contact_name/email, confidence_rating, search_vector
 
-application_events
-  id, application_id (fk), stage, event_date,
-  source_email_id (nullable — set by Phase 3 Gmail sync), notes
+**2. Set up the database**
+Create a Supabase project. In its **SQL Editor**, run these files from the `supabase/` folder in this order:
+1. `schema.sql`
+2. `migrations/002_event_driven_stages.sql`
+3. `migrations/003_per_user_access.sql`
+4. `migrations/004_gmail_sync.sql`
+5. `migrations/005_hirevue_stage.sql` (run this one by itself)
+6. `migrations/006_progress_view_hirevue.sql`
+
+Then copy your **Project URL**, **anon key**, and **service_role key** (Project Settings → API) into `.env.local`.
+
+**3. Set up Google sign-in and Gmail**
+In the [Google Cloud Console](https://console.cloud.google.com) (no billing needed):
+1. Create a project and turn on the **Gmail API**.
+2. Set up the **OAuth consent screen**: External, leave it in Testing, add your Gmail as a **test user**, and add the `gmail.readonly` scope.
+3. Create an **OAuth client ID** (Web application) with this redirect URI: `https://<your-project-ref>.supabase.co/auth/v1/callback`
+4. In Supabase → Authentication → Providers → **Google**, turn it on and paste in the Client ID and Secret.
+5. In Supabase → Authentication → URL Configuration, set the Site URL to `http://localhost:3000` and add `http://localhost:3000/auth/callback` as a redirect URL.
+6. Add the same Client ID and Secret to `.env.local` as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+
+**4. Run it**
+```bash
+npm run dev
 ```
+Open http://localhost:3000 and sign in with Google. On the permission screen, **tick the box that lets ApplyTrack view your email**. Then click **Sync Gmail**.
+
+**Good to know**
+- While the Google app is in Testing mode, Google makes you reconnect Gmail every 7 days. If the sync says access expired, just sign out and back in.
+- In Testing mode, only accounts on the test-user list can sign in. To let a friend use your copy, add their Gmail as a test user.
 
 ---
 
-## Roadmap
+## What's next
 
-Built in phases deliberately, each one shippable and demoable on its own before the next depends on it:
-
-1. **Data model + CRUD** *(done)* — get the funnel representable end-to-end before automating anything.
-2. **Dashboard views** *(done)* — cards, kanban (drag-and-drop, with a select fallback on mobile), table, and calendar on top of the same data; view and filters persist across reloads.
-3. **Gmail auto-tracking** *(next)* — the highest-leverage feature, deliberately sequenced *after* the data model is proven so classification has a stable target to write into.
-4. **AI follow-up assistant** — needs (2) and (3) in place to have both pipeline state and email signal to reason over.
-5. **Creative extras** — nice-to-haves that don't block the core loop.
-
----
-
-## Tech stack
-
-- **Frontend:** Next.js 16 (App Router), TypeScript, Tailwind CSS 4
-- **Backend:** Next.js API routes
-- **Database:** Supabase (Postgres), full-text search via generated `tsvector` column
-- **Planned:** Google OAuth + Gmail API (`gmail.readonly`), Claude API for email classification and the follow-up assistant
+- [ ] Use AI to sort only the emails the rules aren't sure about
+- [ ] Deploy it online so friends can use it without setting anything up
+- [ ] Merge duplicate applications in one click
+- [ ] AI-drafted follow-up emails (drafted only, never sent automatically)
+- [ ] Time-in-stage stats (how long companies take at each step)
+- [ ] Interview prep notes generated from the saved job description
 
 ---
 
-## Getting started
-
-1. **Create a Supabase project** at [supabase.com](https://supabase.com), then in the SQL editor run `supabase/schema.sql`, followed by `supabase/migrations/002_event_driven_stages.sql`, to create the tables, triggers, indexes, and stats view. (Already ran `schema.sql` earlier? Just run `002` — it's safe to re-run.)
-2. **Copy environment variables:**
-   ```bash
-   cp .env.example .env.local
-   ```
-   Fill in `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` from Project Settings → API in your Supabase dashboard.
-3. **Install and run:**
-   ```bash
-   npm install
-   npm run dev
-   ```
-4. Open `http://localhost:3000` and add your first application.
-
-Phase 3 (Gmail sync) will additionally require a Google Cloud project with the Gmail API enabled and an OAuth consent screen kept in "Testing" mode (no verification needed for personal use) — not required to run Phase 1.
-
----
-
-## Status
-
-Phases 1–2 are complete: schema with an event-driven stage history, CRUD UI, JD archive with reading view and full-text search, history-based funnel stats, and four dashboard views. Phase 3 (Gmail auto-tracking, plus Google sign-in and per-user RLS) is next.
+Built by **Pedrocia (Seddy) De-Sosoo** · Computer Science + MIS @ RIT

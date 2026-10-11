@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import DeleteAccount from "@/components/DeleteAccount";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { useProfile } from "@/lib/use-profile";
 import { THEMES, type EncouragementMode, type ThemeId } from "@/lib/themes";
@@ -137,6 +138,15 @@ export default function SettingsPage() {
           Go to my dashboard →
         </Link>
       </div>
+
+      <DeleteAccount />
+      <p className="mt-4 text-xs text-neutral-500">
+        Read how ApplyTrack handles your data in the{" "}
+        <Link href="/privacy" className="font-medium underline">
+          privacy policy
+        </Link>
+        .
+      </p>
     </div>
   );
 }

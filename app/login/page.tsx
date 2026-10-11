@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 // Read-only Gmail access, requested at sign-in so one Google login covers
@@ -46,6 +47,12 @@ export default function LoginPage() {
         {loading ? "Redirecting…" : "Continue with Google"}
       </button>
       {error && <p className="mt-4 text-sm text-rose-600">{error}</p>}
+      <p className="mt-8 text-xs text-neutral-400">
+        By signing in you agree to how we handle your data:{" "}
+        <Link href="/privacy" className="font-medium text-neutral-600 underline">
+          Privacy
+        </Link>
+      </p>
     </div>
   );
 }

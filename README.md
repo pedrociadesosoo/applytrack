@@ -4,6 +4,8 @@
 
 I was applying to a lot of internships and my spreadsheet kept falling behind. I'd get an OA invite or a rejection email and forget to update the row. So I built ApplyTrack. It reads my job emails, adds new applications on its own, and moves each one through the stages (applied → OA → HireVue → interviews → offer or rejection). I just open the dashboard and see where everything stands.
 
+But tracking applications can feel heavy. Most trackers end up as a list of rejections, and that wears you down. I wanted ApplyTrack to feel calm and encouraging instead, something that reminds you there's hope even when an email says no.
+
 ---
 
 ## What it does
@@ -47,6 +49,11 @@ Most trackers make you decide when something is ghosted. I made it a rule based 
 - **Interview conversion** = applications that reached a live interview (phone screen or later). OAs and HireVues don't count, since you're not talking to a person.
 - **Needs follow-up** = open applications with no news in 10+ days and no reminder already set.
 - **Open** = still in play. Rejected, ghosted, and withdrawn applications are closed, and so is an offer once you've accepted or declined it. An offer you're still deciding on stays open.
+
+**7. Make it encouraging, not just efficient.**
+Job hunting is stressful, and a tracker shouldn't make it worse. So the dashboard greets you by name based on the time of day, uses soft colors and themes you can pick, and shows a short line of encouragement under the greeting. It also pays attention to what just happened. After a rejection, it acknowledges it and shares something hopeful. When you move forward or get an offer, it celebrates with you.
+
+**Why scripture?** My faith is a big part of how I get through hard seasons, including job searching, so I wanted that in the app I use every day. By default it shows a verse of the day, plus verses picked for the moment, like Psalm 34:18 after a rejection or Joshua 1:9 before an interview. But I also wanted my friends to use this, and not everyone shares my faith. So in Settings you can switch to general encouraging words (no scripture) or turn it off completely. It's personal to me, but welcoming to everyone. The verses come from the World English Bible, which is public domain, so they're free to use in a public app.
 
 ---
 

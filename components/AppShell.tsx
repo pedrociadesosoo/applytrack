@@ -27,7 +27,7 @@ export default function AppShell({ user, children }: { user: ShellUser | null; c
   return (
     <div className="flex min-h-screen flex-1 flex-col md:flex-row">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-neutral-200 bg-white/70 px-4 py-6 backdrop-blur md:flex">
+      <aside className="theme-pattern sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-neutral-200 bg-white/70 px-4 py-6 backdrop-blur md:flex">
         <Link href="/" className="px-2 text-xl font-bold tracking-tight text-neutral-900">
           Apply<span className="text-indigo-500">Track</span>
         </Link>
@@ -69,7 +69,7 @@ export default function AppShell({ user, children }: { user: ShellUser | null; c
       </aside>
 
       {/* Phone top bar */}
-      <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur md:hidden">
+      <header className="theme-pattern sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur md:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <Link href="/" className="text-base font-bold tracking-tight text-neutral-900">
             Apply<span className="text-indigo-500">Track</span>

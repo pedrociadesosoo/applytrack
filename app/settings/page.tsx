@@ -65,7 +65,7 @@ export default function SettingsPage() {
       <section className="mt-5 rounded-3xl bg-white p-6 shadow-sm">
         <h2 className="text-base font-semibold text-neutral-900">Theme</h2>
         <p className="mt-0.5 text-sm text-neutral-500">Click one to preview it.</p>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {THEMES.map((t) => {
             const selected = currentTheme === t.id;
             return (

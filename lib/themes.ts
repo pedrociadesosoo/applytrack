@@ -1,7 +1,7 @@
 // Theme + encouragement preferences, stored in the user's Supabase auth
 // metadata so they follow the account across devices.
 
-export type ThemeId = "blush" | "lavender" | "sage" | "ocean" | "classic";
+export type ThemeId = "blush" | "lavender" | "sage" | "ocean" | "coffee" | "midnight" | "leopard" | "classic";
 export type EncouragementMode = "scripture" | "quotes" | "off";
 
 export const DEFAULT_THEME: ThemeId = "blush";
@@ -12,6 +12,9 @@ export const THEMES: { id: ThemeId; name: string; swatches: string[] }[] = [
   { id: "lavender", name: "Lavender", swatches: ["#f3f0f8", "#8162d6", "#e6d4f5", "#2f2842"] },
   { id: "sage", name: "Sage", swatches: ["#f1f4ee", "#538f58", "#cfe2c3", "#2a3225"] },
   { id: "ocean", name: "Ocean", swatches: ["#eef3f7", "#3285bb", "#cadff2", "#233039"] },
+  { id: "coffee", name: "Coffee", swatches: ["#f8efe2", "#b06f35", "#efd3b0", "#3b2819"] },
+  { id: "midnight", name: "Dark", swatches: ["#131116", "#e08ab5", "#43283b", "#f6f2f8"] },
+  { id: "leopard", name: "Leopard", swatches: ["#19120c", "#cf9d54", "#c8995a", "#f7ecdc"] },
   { id: "classic", name: "Classic", swatches: ["#fafafa", "#4f46e5", "#e5e5e5", "#171717"] },
 ];
 

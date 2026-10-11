@@ -119,6 +119,97 @@
   --tile-4: #cadff2;
 }
 
+/* Dark. Ink and surfaces swap, so text on the dark-tinted cards stays light. */
+[data-theme="midnight"] {
+  color-scheme: dark;
+  --color-white: #1d1a21;
+  --color-neutral-50: #131116;
+  --color-neutral-100: #26222b;
+  --color-neutral-200: #322d38;
+  --color-neutral-300: #433d4a;
+  --color-neutral-400: #8a8293;
+  --color-neutral-500: #a29aab;
+  --color-neutral-600: #bdb5c5;
+  --color-neutral-700: #d4cdda;
+  --color-neutral-800: #e7e1ec;
+  --color-neutral-900: #f6f2f8;
+  --color-indigo-50: #2a1f2b;
+  --color-indigo-100: #3a2938;
+  --color-indigo-200: #5a3b55;
+  --color-indigo-300: #8a5379;
+  --color-indigo-400: #c06f9c;
+  --color-indigo-500: #e08ab5;
+  --color-indigo-600: #f0a8c8;
+  --color-indigo-700: #f6c3da;
+  --tile-1: #3d3522;
+  --tile-2: #43283b;
+  --tile-3: #283a2d;
+  --tile-4: #273247;
+}
+
+/* Coffee: cream, latte, espresso, caramel. */
+[data-theme="coffee"] {
+  --color-white: #fffaf2;
+  --color-neutral-50: #f8efe2;
+  --color-neutral-100: #f0e2cf;
+  --color-neutral-200: #e4d0b6;
+  --color-neutral-300: #d1b694;
+  --color-neutral-400: #a4886a;
+  --color-neutral-500: #84674d;
+  --color-neutral-600: #6d523b;
+  --color-neutral-700: #5a412e;
+  --color-neutral-800: #483323;
+  --color-neutral-900: #3b2819;
+  --color-indigo-50: #fbf1e6;
+  --color-indigo-100: #f5e0c7;
+  --color-indigo-200: #ecc79e;
+  --color-indigo-300: #dfa86f;
+  --color-indigo-400: #cd8a4a;
+  --color-indigo-500: #b06f35;
+  --color-indigo-600: #8f5827;
+  --color-indigo-700: #74461f;
+  --tile-1: #f6e3a8;
+  --tile-2: #efd3b0;
+  --tile-3: #e2c9b5;
+  --tile-4: #f3d9c4;
+}
+
+/* Leopard: dark chocolate and gold, with a leopard-print sidebar. */
+[data-theme="leopard"] {
+  color-scheme: dark;
+  --color-white: #241a12;
+  --color-neutral-50: #19120c;
+  --color-neutral-100: #2e2218;
+  --color-neutral-200: #3b2c20;
+  --color-neutral-300: #4f3c2b;
+  --color-neutral-400: #8c765f;
+  --color-neutral-500: #a8917a;
+  --color-neutral-600: #c4ad95;
+  --color-neutral-700: #dcc8b0;
+  --color-neutral-800: #ecdcc6;
+  --color-neutral-900: #f7ecdc;
+  --color-indigo-50: #2f2213;
+  --color-indigo-100: #3f2d18;
+  --color-indigo-200: #5c4220;
+  --color-indigo-300: #8a6430;
+  --color-indigo-400: #b5853f;
+  --color-indigo-500: #cf9d54;
+  --color-indigo-600: #e2b878;
+  --color-indigo-700: #f0d2a0;
+  --tile-1: #4a3620;
+  --tile-2: #3f2a21;
+  --tile-3: #3a3322;
+  --tile-4: #33281f;
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23c99a5b'/%3E%3Cellipse cx='28' cy='30' rx='15' ry='11' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='20 7 12 10' transform='rotate%28-20 28 30%29'/%3E%3Cellipse cx='96' cy='22' rx='12' ry='9' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='15 9 19 7' transform='rotate%2825 96 22%29'/%3E%3Cellipse cx='150' cy='40' rx='14' ry='10' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='14 10 16 8' transform='rotate%28-50 150 40%29'/%3E%3Cellipse cx='62' cy='78' rx='16' ry='12' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='17 8 13 9' transform='rotate%2812 62 78%29'/%3E%3Cellipse cx='128' cy='96' rx='13' ry='10' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='17 8 13 9' transform='rotate%28-30 128 96%29'/%3E%3Cellipse cx='22' cy='118' rx='13' ry='10' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='17 8 13 9' transform='rotate%2835 22 118%29'/%3E%3Cellipse cx='88' cy='138' rx='15' ry='11' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='20 7 12 10' transform='rotate%28-8 88 138%29'/%3E%3Cellipse cx='160' cy='150' rx='12' ry='9' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='17 8 13 9' transform='rotate%2840 160 150%29'/%3E%3Cellipse cx='40' cy='-10' rx='11' ry='8' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='15 9 19 7' transform='rotate%28-15 40 -10%29'/%3E%3Cellipse cx='40' cy='170' rx='11' ry='8' fill='%23a46d34' stroke='%2324140a' stroke-width='7' stroke-linecap='round' stroke-dasharray='17 8 13 9' transform='rotate%28-15 40 170%29'/%3E%3Cg fill='%2324140a'%3E%3Cellipse cx='60' cy='30' rx='4' ry='3'/%3E%3Cellipse cx='118' cy='58' rx='3.5' ry='2.6'/%3E%3Cellipse cx='10' cy='74' rx='3' ry='2.2'/%3E%3Cellipse cx='100' cy='76' rx='2.6' ry='2'/%3E%3Cellipse cx='170' cy='100' rx='3.4' ry='2.4'/%3E%3Cellipse cx='52' cy='124' rx='3' ry='2.2'/%3E%3Cellipse cx='140' cy='128' rx='2.6' ry='2'/%3E%3Cellipse cx='120' cy='170' rx='3.6' ry='2.6'/%3E%3Cellipse cx='70' cy='172' rx='2.4' ry='1.8'/%3E%3Cellipse cx='178' cy='10' rx='3' ry='2.2'/%3E%3C/g%3E%3C/svg%3E");
+  --pattern-shade: linear-gradient(rgba(25, 18, 12, 0.72), rgba(25, 18, 12, 0.84));
+}
+
+/* Decorative print on the sidebar/top bar for themes that have one. */
+.theme-pattern {
+  background-image: var(--pattern-shade, none), var(--pattern, none);
+  background-size: auto, 180px 180px;
+}
+
 body {
   font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }

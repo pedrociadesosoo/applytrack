@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getApplication, getApplicationEvents } from "@/lib/applications";
-import { STAGE_LABELS, SOURCE_LABELS } from "@/lib/types";
-import { formatDate, relativeTime } from "@/lib/format";
+import { SOURCE_LABELS } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 import StageBadge from "@/components/StageBadge";
 import JDReadingView from "@/components/JDReadingView";
 import DeleteApplicationButton from "@/components/DeleteApplicationButton";
 import { ghostDeadline } from "@/lib/ghosting";
 import OfferDecisionPicker from "@/components/OfferDecisionPicker";
-import StageJourney from "@/components/StageJourney";
+import JourneySection from "@/components/JourneySection";
 import MergeApplication from "@/components/MergeApplication";
 
 export default async function ApplicationDetailPage({
@@ -81,32 +81,12 @@ export default async function ApplicationDetailPage({
             </div>
           </section>
 
-          <section>
-            <h2 className="text-sm font-semibold text-neutral-900">Journey</h2>
-            <p className="mt-0.5 text-xs text-neutral-500">Every stage this application has been through. Hover a stage for details.</p>
-            <div className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
-              <StageJourney events={events} current={application.current_stage} decision={application.offer_decision} />
-              <details className="group mt-4 border-t border-neutral-100 pt-3">
-                <summary className="cursor-pointer list-none text-xs font-medium text-neutral-500 hover:text-neutral-800">
-                  <span className="inline-block transition group-open:rotate-90">›</span> Full history ({events.length})
-                </summary>
-                <div className="mt-3">
-                  <ol className="mt-3 space-y-3 border-l border-neutral-200 pl-4">
-              {events.map((event) => (
-                <li key={event.id} className="relative">
-                  <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-neutral-300" />
-                  <p className="text-sm font-medium text-neutral-800">{STAGE_LABELS[event.stage]}</p>
-                  <p className="text-xs text-neutral-400">
-                    {formatDate(event.event_date)} · {relativeTime(event.event_date)}
-                  </p>
-                  {event.notes && <p className="mt-0.5 text-xs text-neutral-500">{event.notes}</p>}
-                </li>
-              ))}
-            </ol>
-                </div>
-              </details>
-            </div>
-          </section>
+          <JourneySection
+            applicationId={application.id}
+            events={events}
+            current={application.current_stage}
+            decision={application.offer_decision}
+          />
         </div>
 
         <aside className="space-y-4">

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { Application, ApplicationStage } from "@/lib/types";
+import type { Application } from "@/lib/types";
 import { PLACEHOLDER_ROLE } from "@/lib/gmail/apply";
 
 // Merge this application (the duplicate) into another one: its history and
@@ -44,16 +44,6 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (into.role_title === PLACEHOLDER_ROLE && from.role_title !== PLACEHOLDER_ROLE) patch.role_title = from.role_title;
     if (from.application_date < into.application_date) patch.application_date = from.application_date;
 
-    // Current stage = the latest event in the combined history.
-    const { data: latest } = await supabase
-      .from("application_events")
-      .select("stage")
-      .eq("application_id", intoId)
-      .order("event_date", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (latest && latest.stage !== into.current_stage) patch.current_stage = latest.stage as ApplicationStage;
-
     if (Object.keys(patch).length) {
       const { error: patchError } = await supabase.from("applications").update(patch).eq("id", intoId);
       if (patchError) throw patchError;
@@ -61,6 +51,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     const { error: deleteError } = await supabase.from("applications").delete().eq("id", fromId);
     if (deleteError) throw deleteError;
+
+    // Current stage = the latest step in the combined history (quietly,
+    // without logging an extra "Stage updated manually" step).
+    await supabase.rpc("recompute_application_stage", { p_app: intoId });
 
     return NextResponse.json({ ok: true, id: intoId });
   } catch (error) {

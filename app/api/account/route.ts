@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { createAdminSupabaseClient, createServerSupabaseClient } from "@/lib/supabase/server";
+import { isDemoRequest } from "@/lib/demo";
 
 // Permanently delete the signed-in user's account and everything tied to it.
 export async function DELETE() {
+  if (await isDemoRequest()) return NextResponse.json({ error: "This is the demo, so there's no account to delete." }, { status: 400 });
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },

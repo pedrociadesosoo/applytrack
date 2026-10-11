@@ -7,6 +7,7 @@ export interface ShellUser {
   firstName: string;
   email: string | null;
   avatarUrl: string | null;
+  demo?: boolean;
 }
 
 const NAV = [
@@ -63,7 +64,7 @@ export default function AppShell({ user, children }: { user: ShellUser | null; c
             className="flex w-full items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900"
           >
             <IconLogout />
-            Sign out
+            {user.demo ? "Exit demo" : "Sign out"}
           </button>
         </form>
       </aside>
@@ -91,7 +92,17 @@ export default function AppShell({ user, children }: { user: ShellUser | null; c
         </nav>
       </header>
 
-      <main className="min-w-0 flex-1">{children}</main>
+      <main className="min-w-0 flex-1">
+        {user.demo && (
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-neutral-900 px-4 py-2 text-center text-xs text-white">
+            <span>You&apos;re viewing a demo with sample data. Changes aren&apos;t saved.</span>
+            <a href="/login" className="font-semibold underline">
+              Sign in to track your own →
+            </a>
+          </div>
+        )}
+        {children}
+      </main>
     </div>
   );
 }

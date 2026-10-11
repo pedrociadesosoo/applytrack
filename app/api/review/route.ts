@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isDemoRequest } from "@/lib/demo";
+import { demoData } from "@/lib/demo-data";
 
 // Emails the sync wasn't sure about, oldest first.
 export async function GET() {
+  if (await isDemoRequest()) return NextResponse.json({ signals: demoData().signals });
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("email_signals")

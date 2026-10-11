@@ -12,6 +12,7 @@ import {
   isToday,
   startOfMonth,
   startOfWeek,
+  subDays,
   subMonths,
 } from "date-fns";
 import type { Application } from "@/lib/types";
@@ -65,8 +66,16 @@ export default function CalendarView({
     return map;
   }, [suggestions]);
 
-  const overdue = suggestions.filter((s) => s.date < today);
-  const soon = suggestions.filter((s) => s.date >= today).slice(0, 10);
+  // Keep the list short: recent overdue items first, then what's coming up.
+  // Anything overdue by more than two weeks has almost certainly been
+  // handled (or missed), so it only shows on the calendar grid.
+  const [showAll, setShowAll] = useState(false);
+  const twoWeeksAgo = format(subDays(new Date(), 14), "yyyy-MM-dd");
+  const overdueAll = suggestions.filter((s) => s.date < today && s.date >= twoWeeksAgo);
+  const soonAll = suggestions.filter((s) => s.date >= today);
+  const overdue = showAll ? overdueAll : overdueAll.slice(-4);
+  const soon = showAll ? soonAll : soonAll.slice(0, 5);
+  const hiddenCount = overdueAll.length + soonAll.length - overdue.length - soon.length;
 
   async function dismiss(key: string) {
     setDismissed((prev) => new Set(prev).add(key));
@@ -172,6 +181,14 @@ export default function CalendarView({
               <SuggestionRow key={s.key} s={s} today={today} onOpen={onQuickView} onDismiss={dismiss} />
             ))}
           </ul>
+        )}
+        {(hiddenCount > 0 || showAll) && (
+          <button
+            onClick={() => setShowAll((v) => !v)}
+            className="mt-3 w-full rounded-full border border-neutral-200 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-50"
+          >
+            {showAll ? "Show less" : `Show ${hiddenCount} more`}
+          </button>
         )}
       </div>
     </div>

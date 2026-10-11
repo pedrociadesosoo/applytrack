@@ -3,6 +3,7 @@ import { listForStats } from "@/lib/applications";
 import { computeStats } from "@/lib/stats";
 import { findGhostCandidates } from "@/lib/ghosting";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isDemoRequest } from "@/lib/demo";
 
 export async function GET() {
   try {
@@ -11,7 +12,7 @@ export async function GET() {
     // Auto-ghost internships whose season has started with no outcome.
     // Runs whenever the dashboard loads; idempotent, and each one is logged
     // as a "ghosted" event so the timeline says why.
-    const candidates = findGhostCandidates(apps, events);
+    const candidates = (await isDemoRequest()) ? [] : findGhostCandidates(apps, events);
     if (candidates.length) {
       const supabase = await createServerSupabaseClient();
       const now = new Date().toISOString();

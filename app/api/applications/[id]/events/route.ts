@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isDemoRequest } from "@/lib/demo";
 import { STAGE_ORDER, type ApplicationStage } from "@/lib/types";
 
 // Add a missing step to an application's journey.
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  if (await isDemoRequest()) return NextResponse.json({ ok: true, demo: true });
   const { id } = await params;
   const supabase = await createServerSupabaseClient();
   try {

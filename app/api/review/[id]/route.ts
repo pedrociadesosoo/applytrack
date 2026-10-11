@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { applySignal, type AppRow } from "@/lib/gmail/apply";
 import type { ApplicationStage } from "@/lib/types";
+import { isDemoRequest } from "@/lib/demo";
 
 // Confirm (optionally with corrected company/role/stage) or dismiss a
 // flagged email.
@@ -10,6 +11,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  if (await isDemoRequest()) return NextResponse.json({ ok: true, demo: true });
   const supabase = await createServerSupabaseClient();
 
   try {

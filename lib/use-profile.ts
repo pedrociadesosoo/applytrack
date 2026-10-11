@@ -10,6 +10,7 @@ export interface Profile {
   encouragement: EncouragementMode;
   displayName: string;
   onboarded: boolean;
+  demo: boolean;
 }
 
 // The signed-in user's name and preferences, read from their auth metadata.
@@ -20,7 +21,20 @@ export function useProfile(): Profile | null {
     createBrowserSupabaseClient()
       .auth.getUser()
       .then(({ data }) => {
-        if (cancelled || !data.user) return;
+        if (cancelled) return;
+        if (!data.user) {
+          if (document.cookie.includes("applytrack_demo=1")) {
+            setProfile({
+              firstName: "",
+              theme: (document.documentElement.dataset.theme as ThemeId) ?? "blush",
+              encouragement: "scripture",
+              displayName: "",
+              onboarded: false,
+              demo: true,
+            });
+          }
+          return;
+        }
         const meta = data.user.user_metadata as Record<string, unknown>;
         setProfile({
           firstName: firstNameFrom(meta, data.user.email),
@@ -28,6 +42,7 @@ export function useProfile(): Profile | null {
           encouragement: encouragementFrom(meta),
           displayName: typeof meta.display_name === "string" ? meta.display_name : "",
           onboarded: meta.onboarded === true,
+          demo: false,
         });
       });
     return () => {

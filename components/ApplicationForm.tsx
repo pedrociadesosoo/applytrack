@@ -76,7 +76,8 @@ export default function ApplicationForm({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-      router.push(`/applications/${data.application.id}`);
+      // Demo mode doesn't save new applications, so head back to the dashboard.
+      router.push(String(data.application.id).startsWith("demo-new-") ? "/" : `/applications/${data.application.id}`);
       router.refresh();
     } catch (err) {
       setError((err as Error).message);

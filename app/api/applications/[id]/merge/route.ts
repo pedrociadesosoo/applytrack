@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isDemoRequest } from "@/lib/demo";
 import type { Application } from "@/lib/types";
 import { PLACEHOLDER_ROLE } from "@/lib/gmail/apply";
 
@@ -7,6 +8,10 @@ import { PLACEHOLDER_ROLE } from "@/lib/gmail/apply";
 // emails move over, missing details are filled in, then the duplicate is
 // removed.
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  if (await isDemoRequest()) {
+    const { into } = await request.json();
+    return NextResponse.json({ ok: true, demo: true, id: into });
+  }
   const { id: fromId } = await params;
   const supabase = await createServerSupabaseClient();
   try {

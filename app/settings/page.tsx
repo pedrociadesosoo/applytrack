@@ -32,6 +32,10 @@ export default function SettingsPage() {
   }, [theme]);
 
   async function save() {
+    if (profile?.demo) {
+      setStatus("saved");
+      return;
+    }
     setStatus("saving");
     const { error } = await createBrowserSupabaseClient().auth.updateUser({
       data: {
@@ -129,7 +133,9 @@ export default function SettingsPage() {
         >
           {status === "saving" ? "Saving…" : "Save changes"}
         </button>
-        {status === "saved" && <span className="text-sm text-neutral-600">Saved ✓</span>}
+        {status === "saved" && (
+          <span className="text-sm text-neutral-600">{profile.demo ? "Looks good! (Demo: not saved)" : "Saved ✓"}</span>
+        )}
         {status === "error" && <span className="text-sm text-rose-600">Couldn&apos;t save. Try again.</span>}
         <Link
           href="/"
@@ -139,7 +145,7 @@ export default function SettingsPage() {
         </Link>
       </div>
 
-      <DeleteAccount />
+      {!profile.demo && <DeleteAccount />}
       <p className="mt-4 text-xs text-neutral-500">
         Read how ApplyTrack handles your data in the{" "}
         <Link href="/privacy" className="font-medium underline">

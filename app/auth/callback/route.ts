@@ -29,5 +29,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  return NextResponse.redirect(`${origin}/`);
+  const res = NextResponse.redirect(`${origin}/`);
+  res.cookies.delete("applytrack_demo"); // a real sign-in ends the demo
+  return res;
 }

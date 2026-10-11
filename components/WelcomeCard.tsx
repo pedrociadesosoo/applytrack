@@ -13,6 +13,7 @@ export default function WelcomeCard() {
 
   async function dismiss() {
     setHidden(true);
+    if (profile?.demo) return;
     await createBrowserSupabaseClient().auth.updateUser({ data: { onboarded: true } });
   }
 

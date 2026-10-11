@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/auth/", "/privacy"];
+const PUBLIC_PATHS = ["/login", "/auth/", "/privacy", "/demo"];
 
 // Runs before every page/API request: refreshes the Supabase session cookie
 // and keeps signed-out visitors on the login page.
@@ -34,7 +34,8 @@ export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isPublic = PUBLIC_PATHS.some((p) => path.startsWith(p));
 
-  if (!user && !isPublic) {
+  const isDemo = request.cookies.get("applytrack_demo")?.value === "1";
+  if (!user && !isPublic && !isDemo) {
     if (path.startsWith("/api/")) {
       return NextResponse.json({ error: "Not signed in" }, { status: 401 });
     }

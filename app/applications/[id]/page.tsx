@@ -153,7 +153,9 @@ function Row({ label, value }: { label: string; value: string | null }) {
   return (
     <div className="flex justify-between gap-2">
       <dt className="text-neutral-400">{label}</dt>
-      <dd className="text-neutral-700">{value || "—"}</dd>
+      <dd className="min-w-0 truncate text-right text-neutral-700" title={value ?? undefined}>
+        {value || "—"}
+      </dd>
     </div>
   );
 }

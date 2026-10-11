@@ -1,6 +1,8 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { Application, ApplicationEvent, ApplicationInput } from "@/lib/types";
 import type { StatsApp, StatsEvent } from "@/lib/stats";
+import { isDemoRequest } from "@/lib/demo";
+import { demoData } from "@/lib/demo-data";
 
 export interface ListFilters {
   search?: string;
@@ -9,6 +11,15 @@ export interface ListFilters {
 }
 
 export async function listApplications(filters: ListFilters = {}): Promise<Application[]> {
+  if (await isDemoRequest()) {
+    const q = filters.search?.trim().toLowerCase();
+    return demoData().apps.filter(
+      (a) =>
+        (!filters.stage || a.current_stage === filters.stage) &&
+        (!filters.source || a.source === filters.source) &&
+        (!q || a.company.toLowerCase().includes(q) || a.role_title.toLowerCase().includes(q))
+    );
+  }
   const supabase = await createServerSupabaseClient();
   let query = supabase
     .from("applications")
@@ -41,6 +52,7 @@ export async function listApplications(filters: ListFilters = {}): Promise<Appli
 }
 
 export async function getApplication(id: string): Promise<Application | null> {
+  if (await isDemoRequest()) return demoData().apps.find((a) => a.id === id) ?? null;
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("applications")
@@ -52,6 +64,7 @@ export async function getApplication(id: string): Promise<Application | null> {
 }
 
 export async function getApplicationEvents(applicationId: string): Promise<ApplicationEvent[]> {
+  if (await isDemoRequest()) return demoData().events.filter((e) => e.application_id === applicationId);
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("application_events")
@@ -63,6 +76,11 @@ export async function getApplicationEvents(applicationId: string): Promise<Appli
 }
 
 export async function createApplication(input: ApplicationInput): Promise<Application> {
+  if (await isDemoRequest()) {
+    // Demo: pretend it saved.
+    const now = new Date().toISOString();
+    return { ...input, id: `demo-new-${Date.now()}`, user_id: null, created_at: now, updated_at: now };
+  }
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("applications")
@@ -77,6 +95,11 @@ export async function updateApplication(
   id: string,
   input: Partial<ApplicationInput>
 ): Promise<Application> {
+  if (await isDemoRequest()) {
+    const app = demoData().apps.find((a) => a.id === id);
+    if (!app) throw new Error("Not found");
+    return { ...app, ...input, updated_at: new Date().toISOString() };
+  }
   const supabase = await createServerSupabaseClient();
 
   // Stage changes are logged to application_events by a Postgres trigger
@@ -92,6 +115,7 @@ export async function updateApplication(
 }
 
 export async function deleteApplication(id: string): Promise<void> {
+  if (await isDemoRequest()) return;
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("applications").delete().eq("id", id);
   if (error) throw error;
@@ -102,6 +126,10 @@ export async function deleteApplication(id: string): Promise<void> {
 // Pages through results so large histories aren't cut at Supabase's
 // 1,000-row default.
 export async function listForStats(): Promise<{ apps: StatsApp[]; events: StatsEvent[] }> {
+  if (await isDemoRequest()) {
+    const { apps, events } = demoData();
+    return { apps, events };
+  }
   const supabase = await createServerSupabaseClient();
   const PAGE = 1000;
 

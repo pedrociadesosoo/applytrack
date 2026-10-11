@@ -163,7 +163,8 @@ export default function DashboardPage() {
       {reviewCount > 0 && (
         <Link
           href="/review"
-          className="mt-4 flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800 hover:bg-amber-100"
+          className="mt-4 flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-medium text-neutral-900 transition hover:brightness-95"
+          style={{ background: "var(--tile-1)" }}
         >
           <span>
             {reviewCount} email{reviewCount === 1 ? "" : "s"} need{reviewCount === 1 ? "s" : ""} a quick review

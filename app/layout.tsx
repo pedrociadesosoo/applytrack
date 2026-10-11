@@ -3,6 +3,8 @@ import "./globals.css";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import AppShell from "@/components/AppShell";
 import { firstNameFrom, themeFrom } from "@/lib/themes";
+import { cookies } from "next/headers";
+import { DEMO_COOKIE } from "@/lib/demo";
 
 export const metadata: Metadata = {
   title: "ApplyTrack",
@@ -19,6 +21,7 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
   const meta = user?.user_metadata as Record<string, unknown> | undefined;
+  const demo = !user && (await cookies()).get(DEMO_COOKIE)?.value === "1";
 
   return (
     <html lang="en" data-theme={themeFrom(meta)} className="h-full antialiased">
@@ -31,7 +34,9 @@ export default async function RootLayout({
                   email: user.email ?? null,
                   avatarUrl: typeof meta?.avatar_url === "string" ? meta.avatar_url : null,
                 }
-              : null
+              : demo
+                ? { firstName: "Demo", email: "Sample data", avatarUrl: null, demo: true }
+                : null
           }
         >
           {children}

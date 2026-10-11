@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isDemoRequest } from "@/lib/demo";
 import { STAGE_ORDER, type ApplicationStage } from "@/lib/types";
 
 type Params = { params: Promise<{ id: string; eventId: string }> };
@@ -7,6 +8,7 @@ type Params = { params: Promise<{ id: string; eventId: string }> };
 // Fix a step: change its stage, date, or note. The application's current
 // stage is then recomputed from its latest step.
 export async function PATCH(request: NextRequest, { params }: Params) {
+  if (await isDemoRequest()) return NextResponse.json({ ok: true, demo: true });
   const { id, eventId } = await params;
   const supabase = await createServerSupabaseClient();
   try {
@@ -36,6 +38,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
 // Remove a step that shouldn't be there.
 export async function DELETE(_request: NextRequest, { params }: Params) {
+  if (await isDemoRequest()) return NextResponse.json({ ok: true, demo: true });
   const { id, eventId } = await params;
   const supabase = await createServerSupabaseClient();
   try {

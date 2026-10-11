@@ -54,10 +54,10 @@ export default function StaleList({ items, onChanged }: { items: StaleItem[]; on
               ? { cls: "bg-amber-100 text-amber-800", label: "Follow up" }
               : { cls: "bg-neutral-100 text-neutral-600", label: "Check in" };
         return (
-          <li key={item.id} className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+          <li key={item.id} className="rounded-2xl border border-neutral-200 bg-white p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">{item.company}</p>
+                <p className="text-xs font-medium text-neutral-400">{item.company}</p>
                 <Link
                   href={`/applications/${item.id}`}
                   className="block truncate text-sm font-medium text-neutral-900 hover:text-indigo-600"
@@ -87,7 +87,7 @@ export default function StaleList({ items, onChanged }: { items: StaleItem[]; on
                     href={`mailto:${item.contactEmail}?subject=${encodeURIComponent(`Following up — ${item.role_title}`)}`}
                     className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-neutral-800"
                   >
-                    Email recruiter
+                    Email Recruiter
                   </a>
                 )}
                 <button
@@ -101,14 +101,14 @@ export default function StaleList({ items, onChanged }: { items: StaleItem[]; on
                   }
                   className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
                 >
-                  Followed up · remind me in 7d
+                  Remind Me in 7 Days
                 </button>
                 <button
                   disabled={busy === item.id}
                   onClick={() => patch(item.id, { current_stage: "ghosted" }, "Marked as ghosted")}
                   className="rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-500 hover:bg-neutral-100 disabled:opacity-50"
                 >
-                  Mark ghosted
+                  Mark Ghosted
                 </button>
               </div>
             )}

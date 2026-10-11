@@ -54,7 +54,7 @@ export default function MergeApplication({ application }: { application: Applica
   if (!open) {
     return (
       <button onClick={() => setOpen(true)} className="text-xs font-medium text-neutral-500 hover:text-neutral-800">
-        Is this a duplicate? Merge it →
+        Merge a Duplicate
       </button>
     );
   }

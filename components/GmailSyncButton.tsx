@@ -44,7 +44,7 @@ export default function GmailSyncButton({ onSynced }: { onSynced: () => void }) 
         {syncing ? "Syncing Gmail…" : "Sync Gmail"}
       </button>
       {message && (
-        <p className={`text-xs ${isError ? "text-rose-600" : "text-neutral-500"}`}>{message}</p>
+        <p className={`text-xs ${isError ?"text-rose-600" : "text-neutral-500"}`}>{message}</p>
       )}
     </div>
   );

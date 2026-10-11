@@ -51,7 +51,7 @@ export default function JourneyEditor({
       </ul>
 
       <div className="rounded-2xl border border-dashed border-neutral-300 p-3">
-        <p className="mb-2 text-xs font-semibold text-neutral-600">Add a missing step</p>
+        <p className="mb-2 text-xs font-semibold text-neutral-600">Add a Missing Step</p>
         <div className="flex flex-wrap gap-2">
           <select className={input} value={adding.stage} onChange={(e) => setAdding((a) => ({ ...a, stage: e.target.value as ApplicationStage }))}>
             {STAGE_ORDER.map((s) => (
@@ -69,14 +69,14 @@ export default function JourneyEditor({
             }}
             className="rounded-full bg-neutral-900 px-4 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
           >
-            Add step
+            Add Step
           </button>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
         <button onClick={onDone} className="rounded-full border border-neutral-200 px-4 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50">
-          Done editing
+          Done Editing
         </button>
         <p className="text-xs text-neutral-500">The current stage always follows the latest step.</p>
       </div>

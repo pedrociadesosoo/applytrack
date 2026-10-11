@@ -50,7 +50,7 @@ export default function LoginPage() {
         href="/demo"
         className="mt-3 w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-800 hover:bg-white"
       >
-        Try the demo (no sign-in)
+        Try the Demo
       </a>
       {error && <p className="mt-4 text-sm text-rose-600">{error}</p>}
       <p className="mt-8 text-xs text-neutral-400">

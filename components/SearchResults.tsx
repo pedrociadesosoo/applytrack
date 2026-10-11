@@ -27,7 +27,7 @@ export default function SearchResults({
       <p className="mb-2 text-xs text-neutral-500">
         {applications.length} result{applications.length === 1 ? "" : "s"} for &ldquo;{query}&rdquo;
       </p>
-      <ul className="divide-y divide-neutral-100 overflow-hidden rounded-3xl border border-neutral-200/70 bg-white shadow-sm">
+      <ul className="divide-y divide-neutral-100 overflow-hidden rounded-2xl border border-neutral-200/70 bg-white">
         {applications.map((app) => (
           <li key={app.id}>
             <button

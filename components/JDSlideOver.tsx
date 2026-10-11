@@ -34,7 +34,7 @@ export default function JDSlideOver({
       <div className="relative flex h-full w-full max-w-lg flex-col overflow-y-auto bg-white shadow-2xl">
         <div className="flex items-start justify-between border-b border-neutral-100 px-6 py-5">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
+            <p className="text-xs font-medium text-neutral-400">
               {application.company}
             </p>
             <h2 className="mt-0.5 text-lg font-semibold text-neutral-900">
@@ -79,7 +79,7 @@ export default function JDSlideOver({
             href={`/applications/${application.id}`}
             className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
           >
-            Open full record →
+            Open Application
           </Link>
         </div>
       </div>

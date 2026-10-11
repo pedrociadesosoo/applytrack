@@ -153,7 +153,7 @@ export default function DashboardPage() {
           href="/applications/new"
           className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
         >
-          + Add application
+          + Add Application
           </Link>
         </div>
       </div>
@@ -169,33 +169,33 @@ export default function DashboardPage() {
           <span>
             {reviewCount} email{reviewCount === 1 ? "" : "s"} need{reviewCount === 1 ? "s" : ""} a quick review
           </span>
-          <span aria-hidden>→</span>
+          <span className="font-semibold">Review</span>
         </Link>
       )}
 
       <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile
-          label="Total applications"
+          label="Total Applications"
           value={stats ? stats.total.toString() : "—"}
           caption={stats ? `${stats.open} still open` : undefined}
           tint={1}
         />
         <StatTile
-          label="Response rate"
+          label="Response Rate"
           value={stats ? formatPct(stats.responseRate) : "—"}
           caption={stats ? `${stats.responded} heard back` : undefined}
           tint={2}
           onClick={stats ? () => setPanel("response") : undefined}
         />
         <StatTile
-          label="Interview conversion"
+          label="Interview Conversion"
           value={stats ? formatPct(stats.interviewConversionRate) : "—"}
           caption={stats ? `${stats.interviewed} reached interviews` : undefined}
           tint={3}
           onClick={stats ? () => setPanel("response") : undefined}
         />
         <StatTile
-          label="Needs follow-up"
+          label="Needs Follow-Up"
           value={stats ? stats.staleCount.toString() : "—"}
           caption="quiet 10+ days"
           attention={!!stats && stats.staleCount > 0}
@@ -227,9 +227,7 @@ export default function DashboardPage() {
             <button
               key={opt.key}
               onClick={() => setView(opt.key)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                view === opt.key
-                  ? "bg-neutral-900 text-white"
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${ view === opt.key ?"bg-neutral-900 text-white"
                   : "text-neutral-500 hover:bg-neutral-100"
               }`}
             >
@@ -255,7 +253,7 @@ export default function DashboardPage() {
               href="/applications/new"
               className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700"
             >
-              Add your first one →
+              Add Your First Application
             </Link>
           </div>
         )}
@@ -291,7 +289,7 @@ export default function DashboardPage() {
 
       <Drawer
         open={panel === "response" && !!stats}
-        title="Response rate, explained"
+        title="Response Rate, Explained"
         subtitle="Where that percentage comes from"
         onClose={() => setPanel(null)}
       >
@@ -300,7 +298,7 @@ export default function DashboardPage() {
 
       <Drawer
         open={panel === "stale" && !!stats}
-        title="Needs follow-up"
+        title="Needs Follow-Up"
         subtitle={stats ? `${stats.staleCount} open application${stats.staleCount === 1 ? "" : "s"} with no news in 10+ days` : undefined}
         onClose={() => setPanel(null)}
       >

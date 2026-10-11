@@ -40,7 +40,7 @@ export default function KanbanBoard({
         return (
           <div
             key={stage}
-            className={`flex ${focusStage ? "w-full" : "w-72 flex-shrink-0"} flex-col rounded-3xl border bg-neutral-50/60 transition-colors ${
+            className={`flex ${focusStage ?"w-full" : "w-72 flex-shrink-0"} flex-col rounded-2xl border bg-neutral-50/60 transition-colors ${
               isOver ? "border-indigo-300 bg-indigo-50/60" : "border-neutral-200"
             }`}
             onDragOver={(e) => {
@@ -57,7 +57,7 @@ export default function KanbanBoard({
             }}
           >
             <div className="flex items-center justify-between border-b border-neutral-200 px-3 py-2.5">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+              <h3 className="text-xs font-semibold text-neutral-500">
                 {STAGE_LABELS[stage]}
               </h3>
               <span className="rounded-full bg-neutral-200 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600">
@@ -85,9 +85,9 @@ export default function KanbanBoard({
                     e.dataTransfer.effectAllowed = "move";
                   }}
                   onClick={() => onQuickView(app)}
-                  className="cursor-grab rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-sm transition hover:shadow-md active:cursor-grabbing"
+                  className="cursor-grab rounded-2xl border border-neutral-200/70 bg-white p-3 transition hover:shadow-md active:cursor-grabbing"
                 >
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-400">
+                  <p className="text-[11px] font-medium text-neutral-400">
                     {app.company}
                   </p>
                   <p className="text-sm font-medium text-neutral-900 line-clamp-1">

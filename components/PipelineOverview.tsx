@@ -1,12 +1,12 @@
 "use client";
 
 import type { ApplicationStage, OfferDecision } from "@/lib/types";
-import { STAGE_LABELS } from "@/lib/types";
+import { STAGE_DESCRIPTIONS, STAGE_LABELS } from "@/lib/types";
 import { NO_REPLY_DAYS } from "@/lib/ghosting";
 
 // The pipeline at a glance, left to right in the order a process moves.
 // Bar length = how many applications sit at that stage right now (one hue:
-// it's magnitude, not identity). Click a stage to filter the list below.
+// it's magnitude, not identity). Click a stage to filter it the list below.
 
 const ACTIVE: ApplicationStage[] = [
   "applied", "oa", "hirevue", "phone_screen", "behavioral", "technical_interview", "onsite", "offer",
@@ -14,9 +14,10 @@ const ACTIVE: ApplicationStage[] = [
 const CLOSED: ApplicationStage[] = ["rejected", "ghosted", "withdrawn"];
 
 const SHORT: Partial<Record<ApplicationStage, string>> = {
-  phone_screen: "Phone",
+  oa: "Assessment",
+  phone_screen: "Phone Screen",
+  behavioral: "Behavioral",
   technical_interview: "Technical",
-  onsite: "Onsite",
 };
 
 export default function PipelineOverview({
@@ -34,20 +35,20 @@ export default function PipelineOverview({
   const toggle = (s: string) => onSelect(selected === s ? "" : s);
 
   return (
-    <section className="rounded-3xl bg-white p-5 shadow-sm">
+    <section className="rounded-2xl border border-neutral-200/80 bg-white p-5">
       <div className="mb-3 flex items-baseline justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900">Where things stand</h3>
+        <h3 className="text-sm font-semibold text-neutral-900">Where Things Stand</h3>
         {selected ? (
           <button onClick={() => onSelect("")} className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
-            Clear filter ✕
+            Clear Filter
           </button>
         ) : (
-          <span className="text-xs text-neutral-400">Click a stage to filter</span>
+          <span className="text-xs text-neutral-400">Click a stage to filter it</span>
         )}
       </div>
 
       <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
-        {ACTIVE.map((stage, i) => {
+        {ACTIVE.map((stage) => {
           const count = byStage[stage] ?? 0;
           const isSelected = selected === stage;
           const dim = selected && !isSelected;
@@ -55,18 +56,15 @@ export default function PipelineOverview({
             <li key={stage}>
               <button
                 onClick={() => toggle(stage)}
-                title={`${count} application${count === 1 ? "" : "s"} currently at ${STAGE_LABELS[stage]}`}
-                className={`relative flex h-full w-full flex-col rounded-2xl border px-3 py-2.5 text-left transition ${
-                  isSelected
-                    ? "border-indigo-400 bg-indigo-50/60 ring-1 ring-indigo-400"
+                title={`${STAGE_LABELS[stage]}: ${STAGE_DESCRIPTIONS[stage]}`}
+                className={`relative flex h-full w-full flex-col rounded-2xl border px-3 py-2.5 text-left transition ${ isSelected ?"border-indigo-400 bg-indigo-50/60 ring-1 ring-indigo-400"
                     : "border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50"
                 } ${dim ? "opacity-50" : ""}`}
               >
                 <span className="flex items-center gap-1 text-[11px] font-medium text-neutral-500">
-                  <span className="tabular-nums text-neutral-300">{i + 1}</span>
                   {SHORT[stage] ?? STAGE_LABELS[stage]}
                 </span>
-                <span className={`mt-0.5 text-xl font-semibold ${count ? "text-neutral-900" : "text-neutral-300"}`}>
+                <span className={`mt-0.5 text-xl font-semibold ${count ?"text-neutral-900" : "text-neutral-300"}`}>
                   {count}
                 </span>
                 {stage === "offer" && offerDecisions && count > 0 && (
@@ -80,12 +78,12 @@ export default function PipelineOverview({
                       .join(" · ")}
                   </span>
                 )}
-                <span className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100">
+                <span className="mt-auto pt-2"><span className="block h-1.5 w-full overflow-hidden rounded-full bg-neutral-100">
                   <span
                     className="block h-full rounded-full transition-all"
                     style={{ width: `${(count / max) * 100}%`, background: "var(--color-indigo-500)" }}
                   />
-                </span>
+                </span></span>
               </button>
             </li>
           );
@@ -101,9 +99,7 @@ export default function PipelineOverview({
             <button
               key={stage}
               onClick={() => toggle(stage)}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${
-                isSelected
-                  ? "border-indigo-400 bg-indigo-50 text-indigo-700"
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${ isSelected ?"border-indigo-400 bg-indigo-50 text-indigo-700"
                   : "border-neutral-200 text-neutral-600 hover:bg-neutral-50"
               }`}
             >
@@ -116,7 +112,21 @@ export default function PipelineOverview({
 
       <details className="group mt-3 text-xs text-neutral-500">
         <summary className="cursor-pointer list-none font-medium text-neutral-500 hover:text-neutral-700">
-          <span className="inline-block transition group-open:rotate-90">›</span> How does an application get ghosted?
+          <span className="inline-block transition group-open:rotate-90">›</span> What the Stages Mean
+        </summary>
+        <dl className="mt-2 grid gap-x-6 gap-y-2 rounded-xl bg-neutral-50 p-3 leading-relaxed sm:grid-cols-2">
+          {[...ACTIVE, ...CLOSED].map((s) => (
+            <div key={s}>
+              <dt className="font-semibold text-neutral-700">{STAGE_LABELS[s]}</dt>
+              <dd>{STAGE_DESCRIPTIONS[s]}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
+
+      <details className="group mt-2 text-xs text-neutral-500">
+        <summary className="cursor-pointer list-none font-medium text-neutral-500 hover:text-neutral-700">
+          <span className="inline-block transition group-open:rotate-90">›</span> How Ghosting Works
         </summary>
         <div className="mt-2 space-y-2 rounded-lg bg-neutral-50 p-3 leading-relaxed">
           <p>ApplyTrack moves an open application to <b className="text-neutral-700">Ghosted</b> automatically when:</p>

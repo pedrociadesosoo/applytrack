@@ -75,8 +75,15 @@ function hash(s: string) {
 }
 
 // Same pick all day (and per moment), so it doesn't change on every refresh.
-export function pickEncouragement(mode: EncouragementMode, kind: MomentKind, seed: string): Encouragement | null {
+// `offset` keeps two moments of the same kind on one day from getting the
+// same verse.
+export function pickEncouragement(
+  mode: EncouragementMode,
+  kind: MomentKind,
+  seed: string,
+  offset = 0
+): Encouragement | null {
   if (mode === "off") return null;
   const pool = (mode === "scripture" ? SCRIPTURE : QUOTES)[kind];
-  return pool[hash(`${seed}:${kind}`) % pool.length];
+  return pool[(hash(`${seed}:${kind}`) + offset) % pool.length];
 }

@@ -40,7 +40,7 @@ export default function JDReadingView({ text }: { text: string }) {
       {sections.map((section, i) => (
         <div key={i} className="mb-5">
           {section.heading && (
-            <h3 className="mb-1.5 text-sm font-semibold uppercase tracking-wide text-neutral-500">
+            <h3 className="mb-1.5 text-sm font-semibold text-neutral-500">
               {section.heading}
             </h3>
           )}

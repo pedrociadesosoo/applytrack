@@ -36,12 +36,12 @@ export const STAGE_ORDER: ApplicationStage[] = [
 
 export const STAGE_LABELS: Record<ApplicationStage, string> = {
   applied: "Applied",
-  oa: "OA",
-  hirevue: "HireVue",
+  oa: "Online Assessment",
+  hirevue: "Video Interview",
   phone_screen: "Phone Screen",
-  behavioral: "Behavioral",
+  behavioral: "Behavioral Interview",
   technical_interview: "Technical Interview",
-  onsite: "Onsite / Panel",
+  onsite: "Final Round",
   offer: "Offer",
   rejected: "Rejected",
   ghosted: "Ghosted",
@@ -62,6 +62,21 @@ export const STAGE_COLORS: Record<ApplicationStage, string> = {
   rejected: "bg-rose-100 text-rose-700 border-rose-200",
   ghosted: "bg-neutral-200 text-neutral-600 border-neutral-300",
   withdrawn: "bg-neutral-100 text-neutral-500 border-neutral-200",
+};
+
+// Plain-English explanations, shown on hover and in "What the Stages Mean".
+export const STAGE_DESCRIPTIONS: Record<ApplicationStage, string> = {
+  applied: "You sent your application and are waiting to hear back.",
+  oa: "An online test some companies send before interviews, like a coding challenge or skills quiz (often on HackerRank or CodeSignal).",
+  hirevue: "A recorded video interview: you answer questions on camera with no one live on the other side (often on HireVue).",
+  phone_screen: "A short first call, usually with a recruiter, about your background and interest in the role.",
+  behavioral: "An interview about your past experiences and how you work with others.",
+  technical_interview: "A live interview that tests skills for the role, like coding, case questions, or data problems.",
+  onsite: "The last round, often several interviews in a row. Also called an onsite, panel, or superday.",
+  offer: "They want to hire you.",
+  rejected: "The company said no this time.",
+  ghosted: "No answer after a long wait. ApplyTrack can mark this for you.",
+  withdrawn: "You pulled out of the process.",
 };
 
 export const SOURCE_LABELS: Record<ApplicationSource, string> = {

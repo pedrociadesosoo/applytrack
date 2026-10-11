@@ -10,10 +10,10 @@ import { STAGE_LABELS } from "@/lib/types";
 
 const SEGMENTS: { key: keyof Outcomes; label: string; color: string; heardBack: boolean; hint: string }[] = [
   { key: "offer", label: "Offer", color: "#1baf7a", heardBack: true, hint: "Got an offer" },
-  { key: "inProcess", label: "In process", color: "#2a78d6", heardBack: true, hint: "Heard back and still moving (OA, HireVue, interviews)" },
+  { key: "inProcess", label: "In Process", color: "#2a78d6", heardBack: true, hint: "Heard back and still moving (assessments, video interviews, interviews)" },
   { key: "rejected", label: "Rejected", color: "#eb6834", heardBack: true, hint: "Heard back with a no" },
-  { key: "wentQuiet", label: "Went quiet", color: "#898781", heardBack: true, hint: "Heard back once, then ghosted or withdrawn" },
-  { key: "noResponse", label: "No response yet", color: "#e1e0d9", heardBack: false, hint: "Still at Applied, or ghosted without a reply" },
+  { key: "wentQuiet", label: "Went Quiet", color: "#898781", heardBack: true, hint: "Heard back once, then ghosted or withdrawn" },
+  { key: "noResponse", label: "No Response Yet", color: "#e1e0d9", heardBack: false, hint: "Still at Applied, or ghosted without a reply" },
 ];
 
 const pct = (n: number, total: number) => (total ? Math.round((n / total) * 100) : 0);
@@ -34,13 +34,13 @@ export default function ResponseBreakdown({ stats }: { stats: DashboardStats }) 
         <p className="text-5xl font-semibold tracking-tight text-neutral-900">{pct(stats.responded, total)}%</p>
         <p className="mt-1 text-sm text-neutral-500">
           {stats.responded} of {total} applications heard back from the company — any reply counts,
-          including OAs, HireVues and rejections.
+          including online assessments, video interviews, and rejections.
         </p>
       </div>
 
       {/* Part-to-whole bar */}
       <section>
-        <h3 className="text-sm font-semibold text-neutral-900">Where every application stands</h3>
+        <h3 className="text-sm font-semibold text-neutral-900">Where Every Application Stands</h3>
 
         {total === 0 ? (
           <p className="mt-3 text-sm text-neutral-400">No applications yet.</p>
@@ -62,7 +62,7 @@ export default function ResponseBreakdown({ stats }: { stats: DashboardStats }) 
                     onFocus={() => setHovered(seg.key)}
                     onBlur={() => setHovered(null)}
                     aria-label={`${seg.label}: ${outcomes[seg.key]} (${pct(outcomes[seg.key], total)}%)`}
-                    className={`h-full transition-opacity ${i === 0 ? "rounded-l" : ""} ${
+                    className={`h-full transition-opacity ${i === 0 ?"rounded-l" : ""} ${
                       i === visible.length - 1 ? "rounded-r" : ""
                     } ${hovered && hovered !== seg.key ? "opacity-40" : ""}`}
                     style={{ width: `${(outcomes[seg.key] / total) * 100}%`, background: seg.color, minWidth: 6 }}
@@ -84,7 +84,7 @@ export default function ResponseBreakdown({ stats }: { stats: DashboardStats }) 
                     key={seg.key}
                     onMouseEnter={() => setHovered(seg.key)}
                     onMouseLeave={() => setHovered(null)}
-                    className={`border-b border-neutral-100 last:border-0 ${hovered === seg.key ? "bg-neutral-50" : ""}`}
+                    className={`border-b border-neutral-100 last:border-0 ${hovered === seg.key ?"bg-neutral-50" : ""}`}
                   >
                     <td className="py-2 pr-2">
                       <span className="inline-block h-3 w-3 rounded-sm align-middle" style={{ background: seg.color }} />
@@ -111,10 +111,10 @@ export default function ResponseBreakdown({ stats }: { stats: DashboardStats }) 
 
       {/* Every step reached */}
       <section>
-        <h3 className="text-sm font-semibold text-neutral-900">Every step you&apos;ve reached</h3>
+        <h3 className="text-sm font-semibold text-neutral-900">Every Step You&apos;ve Reached</h3>
         <p className="mt-0.5 text-xs text-neutral-500">
           How many applications ever got each kind of reply. One application can show up in several rows
-          (e.g. an OA, then a rejection).
+          (for example, an online assessment and then a rejection).
         </p>
         <ul className="mt-4 space-y-2.5">
           {RESPONSE_STAGES.map((stage) => {
@@ -141,10 +141,10 @@ export default function ResponseBreakdown({ stats }: { stats: DashboardStats }) 
       </section>
 
       <section className="rounded-lg bg-neutral-50 p-4 text-sm text-neutral-600">
-        <span className="font-semibold text-neutral-900">Interview conversion: {pct(stats.interviewed, total)}%</span>
+        <span className="font-semibold text-neutral-900">Interview Conversion: {pct(stats.interviewed, total)}%</span>
         <span className="block mt-0.5">
-          {stats.interviewed} of {total} applications reached a live interview (phone screen or later). OAs and
-          HireVues count as hearing back, not as interviews.
+          {stats.interviewed} of {total} applications reached a live interview (phone screen or later). Online
+          assessments and video interviews count as hearing back, not as interviews.
         </span>
       </section>
     </div>

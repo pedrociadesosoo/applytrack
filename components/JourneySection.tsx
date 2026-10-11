@@ -25,14 +25,14 @@ export default function JourneySection({
         <h2 className="text-sm font-semibold text-neutral-900">Journey</h2>
         {!editing && (
           <button onClick={() => setEditing(true)} className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
-            Edit journey
+            Edit Journey
           </button>
         )}
       </div>
       <p className="mt-0.5 text-xs text-neutral-500">
         {editing ? "Fix any step that isn’t right." : "Every stage this application has been through. Hover a stage for details."}
       </p>
-      <div className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
+      <div className="mt-4 rounded-2xl border border-neutral-200/80 bg-white p-5">
         {editing ? (
           <JourneyEditor applicationId={applicationId} events={events} onDone={() => setEditing(false)} />
         ) : (
@@ -40,7 +40,7 @@ export default function JourneySection({
             <StageJourney events={events} current={current} decision={decision} />
             <details className="group mt-4 border-t border-neutral-100 pt-3">
               <summary className="cursor-pointer list-none text-xs font-medium text-neutral-500 hover:text-neutral-800">
-                <span className="inline-block transition group-open:rotate-90">›</span> Full history ({events.length})
+                <span className="inline-block transition group-open:rotate-90">›</span> Full History ({events.length})
               </summary>
               <ol className="mt-3 space-y-2.5">
                 {[...events]

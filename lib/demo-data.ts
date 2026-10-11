@@ -74,7 +74,7 @@ const SPECS: Spec[] = [
     company: "Pinecrest Capital",
     role: "Quant Analyst Intern, Summer 2027",
     source: "linkedin",
-    steps: [["applied", 33], ["oa", 28], ["rejected", 14]],
+    steps: [["applied", 33], ["oa", 28], ["rejected", 1, "Detected from email: \"Pinecrest Capital: An update on your application\""]],
   },
   {
     company: "Willow Health",

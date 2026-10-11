@@ -2,6 +2,7 @@
 
 import type { ApplicationStage, OfferDecision } from "@/lib/types";
 import { formatDate } from "@/lib/format";
+import { STAGE_DESCRIPTIONS } from "@/lib/types";
 import { pillLabel, pillStyle } from "@/components/StageBadge";
 
 export interface JourneyEvent {
@@ -52,9 +53,7 @@ export default function StageJourney({
             )}
             <span
               tabIndex={0}
-              className={`group/pill relative inline-flex cursor-default items-center whitespace-nowrap rounded-full border font-medium outline-none transition hover:-translate-y-0.5 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-400 ${pill} ${pillStyle(
-                step.stage,
-                step.stage === "offer" ? decision : undefined
+              className={`group/pill relative inline-flex cursor-default items-center whitespace-nowrap rounded-full border font-medium outline-none transition hover: focus-visible:ring-2 focus-visible:ring-indigo-400 ${pill} ${pillStyle( step.stage, step.stage ==="offer" ? decision : undefined
               )} ${isCurrent ? "font-semibold shadow-sm" : "opacity-80"}`}
             >
               {pillLabel(step.stage, step.stage === "offer" ? decision : undefined)}
@@ -66,7 +65,11 @@ export default function StageJourney({
                   {step.date ? formatDate(step.date) : "Current stage"}
                   {isCurrent && step.date ? " · now" : ""}
                 </span>
-                {step.notes.length > 0 && <span className="mt-0.5 block text-white/80">{step.notes[step.notes.length - 1]}</span>}
+                {step.notes.length > 0 ? (
+                  <span className="mt-0.5 block text-white/80">{step.notes[step.notes.length - 1]}</span>
+                ) : (
+                  <span className="mt-0.5 block text-white/80">{STAGE_DESCRIPTIONS[step.stage]}</span>
+                )}
               </span>
             </span>
           </li>

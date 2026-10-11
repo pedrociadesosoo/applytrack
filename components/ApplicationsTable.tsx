@@ -48,10 +48,10 @@ export default function ApplicationsTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-3xl border border-neutral-200/70 bg-white">
+    <div className="overflow-x-auto rounded-2xl border border-neutral-200/70 bg-white">
       <table className="w-full min-w-[640px] text-left text-sm">
         <thead>
-          <tr className="border-b border-neutral-200 text-xs uppercase tracking-wide text-neutral-400">
+          <tr className="border-b border-neutral-200 text-xs text-neutral-400">
             {COLUMNS.map((col) => (
               <th
                 key={col.key}

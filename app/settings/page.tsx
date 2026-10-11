@@ -60,8 +60,8 @@ export default function SettingsPage() {
       <h1 className="text-3xl font-bold tracking-tight text-neutral-900">Settings</h1>
       <p className="mt-1 text-sm text-neutral-500">Make ApplyTrack feel like yours.</p>
 
-      <section className="mt-8 rounded-3xl bg-white p-6 shadow-sm">
-        <h2 className="text-base font-semibold text-neutral-900">What should we call you?</h2>
+      <section className="mt-8 rounded-2xl border border-neutral-200/80 bg-white p-6">
+        <h2 className="text-base font-semibold text-neutral-900">Your Name</h2>
         <p className="mt-0.5 text-sm text-neutral-500">Used in your greeting.</p>
         <input
           value={currentName}
@@ -71,7 +71,7 @@ export default function SettingsPage() {
         />
       </section>
 
-      <section className="mt-5 rounded-3xl bg-white p-6 shadow-sm">
+      <section className="mt-5 rounded-2xl border border-neutral-200/80 bg-white p-6">
         <h2 className="text-base font-semibold text-neutral-900">Theme</h2>
         <p className="mt-0.5 text-sm text-neutral-500">Click one to preview it.</p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -82,8 +82,7 @@ export default function SettingsPage() {
                 key={t.id}
                 onClick={() => setTheme(t.id)}
                 aria-pressed={selected}
-                className={`rounded-2xl border p-3 text-left transition ${
-                  selected ? "border-neutral-900 ring-2 ring-neutral-900" : "border-neutral-200 hover:border-neutral-400"
+                className={`rounded-2xl border p-3 text-left transition ${ selected ?"border-neutral-900 ring-2 ring-neutral-900" : "border-neutral-200 hover:border-neutral-400"
                 }`}
               >
                 <span className="flex h-10 overflow-hidden rounded-xl">
@@ -101,15 +100,14 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="mt-5 rounded-3xl bg-white p-6 shadow-sm">
+      <section className="mt-5 rounded-2xl border border-neutral-200/80 bg-white p-6">
         <h2 className="text-base font-semibold text-neutral-900">Encouragement</h2>
         <p className="mt-0.5 text-sm text-neutral-500">Shown under your greeting on the dashboard.</p>
         <div className="mt-4 space-y-2">
           {ENCOURAGEMENT_OPTIONS.map((o) => (
             <label
               key={o.id}
-              className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-3.5 transition ${
-                currentEnc === o.id ? "border-neutral-900 bg-neutral-50" : "border-neutral-200 hover:bg-neutral-50"
+              className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-3.5 transition ${ currentEnc === o.id ?"border-neutral-900 bg-neutral-50" : "border-neutral-200 hover:bg-neutral-50"
               }`}
             >
               <input
@@ -132,9 +130,9 @@ export default function SettingsPage() {
         <button
           onClick={save}
           disabled={status === "saving"}
-          className="rounded-full bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 disabled:opacity-60"
+          className="rounded-full bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 disabled:opacity-60"
         >
-          {status === "saving" ? "Saving…" : "Save changes"}
+          {status === "saving" ? "Saving…" : "Save Changes"}
         </button>
         {status === "saved" && (
           <span className="text-sm text-neutral-600">{profile.demo ? "Saved for this visit ✓" : "Saved ✓"}</span>
@@ -144,7 +142,7 @@ export default function SettingsPage() {
           href="/"
           className="ml-auto rounded-full border border-neutral-200 px-5 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-white"
         >
-          Go to my dashboard →
+          Go to Dashboard
         </Link>
       </div>
 

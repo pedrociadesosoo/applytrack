@@ -54,7 +54,10 @@ export interface DashboardStats {
   outcomes: Outcomes; // sums to total; the responded part explains responseRate
   reached: Record<string, number>; // apps that ever reached each response stage
   offerDecisions: Record<OfferDecision, number>; // among apps currently at "offer"
-  recentMoment: RecentMoment | null; // the latest big moment in the last 3 days
+  recentMoment: RecentMoment | null; // the first of recentMoments
+  // Every big moment in the last 3 days (one per application), rejections
+  // first so a hard day leads with comfort, then newest first.
+  recentMoments: RecentMoment[];
 }
 
 export interface RecentMoment {
@@ -149,17 +152,27 @@ export function computeStats(apps: StatsApp[], events: StatsEvent[]): DashboardS
 
   const companyOf = new Map(apps.map((a) => [a.id, a.company]));
   const since = Date.now() - 3 * 24 * 60 * 60 * 1000;
-  let recentMoment: RecentMoment | null = null;
+  const latestPerApp = new Map<string, RecentMoment>();
   for (const e of events) {
     const t = new Date(e.event_date).getTime();
     if (t < since || t > Date.now() + 60_000) continue;
     const kind =
       e.stage === "rejected" ? "rejected" : e.stage === "offer" ? "offer" : PROGRESS_STAGES.has(e.stage) ? "progress" : null;
     if (!kind) continue;
-    if (!recentMoment || e.event_date > recentMoment.date) {
-      recentMoment = { kind, stage: e.stage, company: companyOf.get(e.application_id) ?? "a company", date: e.event_date };
+    const prev = latestPerApp.get(e.application_id);
+    if (!prev || e.event_date > prev.date) {
+      latestPerApp.set(e.application_id, {
+        kind,
+        stage: e.stage,
+        company: companyOf.get(e.application_id) ?? "a company",
+        date: e.event_date,
+      });
     }
   }
+  const recentMoments = [...latestPerApp.values()].sort(
+    (a, b) => Number(b.kind === "rejected") - Number(a.kind === "rejected") || b.date.localeCompare(a.date)
+  );
+  const recentMoment = recentMoments[0] ?? null;
   const total = apps.length;
   return {
     total,
@@ -175,5 +188,6 @@ export function computeStats(apps: StatsApp[], events: StatsEvent[]): DashboardS
     reached,
     offerDecisions,
     recentMoment,
+    recentMoments,
   };
 }

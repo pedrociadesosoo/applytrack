@@ -19,14 +19,14 @@ export default function SearchFilterBar({
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
         placeholder="Search company, role, or JD text (e.g. SQL)"
-        className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 sm:max-w-sm"
+        className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 sm:max-w-sm"
       />
       <select
         value={stage}
         onChange={(e) => onStageChange(e.target.value)}
-        className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 sm:w-auto"
+        className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 sm:w-auto"
       >
-        <option value="">All stages</option>
+        <option value="">All Stages</option>
         {STAGE_ORDER.map((s) => (
           <option key={s} value={s}>
             {STAGE_LABELS[s]}

@@ -34,7 +34,7 @@ export default async function ApplicationDetailPage({
 
       <div className="mt-3 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
+          <p className="text-xs font-medium text-neutral-400">
             {application.company}
           </p>
           <h1 className="mt-0.5 text-2xl font-semibold text-neutral-900">
@@ -61,8 +61,8 @@ export default async function ApplicationDetailPage({
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-8">
           <section>
-            <h2 className="text-sm font-semibold text-neutral-900">Job description</h2>
-            <div className="mt-3 rounded-3xl border border-neutral-200/70 bg-white p-5">
+            <h2 className="text-sm font-semibold text-neutral-900">Job Description</h2>
+            <div className="mt-3 rounded-2xl border border-neutral-200/70 bg-white p-5">
               {application.job_description ? (
                 <JDReadingView text={application.job_description} />
               ) : (
@@ -91,12 +91,12 @@ export default async function ApplicationDetailPage({
 
         <aside className="space-y-4">
           {application.current_stage === "offer" && (
-            <InfoBlock title="Offer decision">
+            <InfoBlock title="Offer Decision">
               <OfferDecisionPicker applicationId={application.id} initial={application.offer_decision} />
             </InfoBlock>
           )}
           {deadline && (
-            <InfoBlock title="Ghost date">
+            <InfoBlock title="Ghost Date">
               <p className="text-sm text-neutral-700">{formatDate(deadline.date)}</p>
               <p className="mt-1 text-xs text-neutral-400">
                 {ghostsOnOpen
@@ -109,7 +109,7 @@ export default async function ApplicationDetailPage({
               </p>
             </InfoBlock>
           )}
-          <InfoBlock title="Next action">
+          <InfoBlock title="Next Action">
             <p className="text-sm text-neutral-700">{application.next_action || "—"}</p>
             {application.next_action_date && (
               <p className="mt-1 text-xs text-neutral-400">
@@ -142,8 +142,8 @@ export default async function ApplicationDetailPage({
 
 function InfoBlock({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-3xl border border-neutral-200/70 bg-white p-4">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">{title}</h3>
+    <div className="rounded-2xl border border-neutral-200/70 bg-white p-4">
+      <h3 className="text-xs font-semibold text-neutral-400">{title}</h3>
       <div className="mt-2">{children}</div>
     </div>
   );

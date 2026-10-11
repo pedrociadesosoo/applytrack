@@ -18,9 +18,9 @@ export default function WelcomeCard() {
   }
 
   return (
-    <div className="mt-6 flex flex-col gap-3 rounded-3xl p-5 sm:flex-row sm:items-center sm:justify-between" style={{ background: "var(--tile-2)" }}>
+    <div className="mt-6 flex flex-col gap-3 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between" style={{ background: "var(--tile-2)" }}>
       <div>
-        <p className="text-base font-semibold text-neutral-900">Welcome to ApplyTrack 👋</p>
+        <p className="text-base font-semibold text-neutral-900">Welcome to ApplyTrack</p>
         <p className="mt-0.5 text-sm text-neutral-700">New here? Take the one-minute tour to see how everything works.</p>
       </div>
       <div className="flex shrink-0 gap-2">
@@ -29,10 +29,10 @@ export default function WelcomeCard() {
           onClick={dismiss}
           className="rounded-full bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-800"
         >
-          Show me how it works
+          Take the Tour
         </Link>
         <button onClick={dismiss} className="rounded-full px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-white/50">
-          Maybe later
+          Maybe Later
         </button>
       </div>
     </div>

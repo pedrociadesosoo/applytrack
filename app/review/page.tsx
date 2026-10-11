@@ -31,7 +31,7 @@ export default function ReviewPage() {
       <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-600">
         ← All applications
       </Link>
-      <h1 className="mt-3 text-xl font-semibold text-neutral-900">Review emails</h1>
+      <h1 className="mt-3 text-xl font-semibold text-neutral-900">Review Emails</h1>
       <p className="mt-1 text-sm text-neutral-500">
         The sync wasn&apos;t sure about these. Fix anything it guessed wrong, then confirm or dismiss.
       </p>
@@ -40,7 +40,7 @@ export default function ReviewPage() {
       {!signals && !error && <p className="mt-6 text-sm text-neutral-400">Loading…</p>}
       {signals && signals.length === 0 && (
         <div className="mt-6 rounded-xl border border-dashed border-neutral-200 py-16 text-center text-sm text-neutral-500">
-          Nothing to review. 🎉
+          Nothing to review right now.
         </div>
       )}
 
@@ -82,7 +82,7 @@ function ReviewCard({ signal, onDone }: { signal: EmailSignal; onDone: () => voi
     "w-full rounded-md border border-neutral-200 bg-white px-2.5 py-1.5 text-sm text-neutral-800";
 
   return (
-    <div className="rounded-3xl border border-neutral-200/70 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-neutral-200/70 bg-white p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <p className="text-sm font-medium text-neutral-900">{signal.subject || "(no subject)"}</p>
         <span className="text-xs text-neutral-400">{formatDate(signal.received_at)}</span>
@@ -118,7 +118,7 @@ function ReviewCard({ signal, onDone }: { signal: EmailSignal; onDone: () => voi
           disabled={busy}
           className="rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-500 hover:bg-neutral-100"
         >
-          Not job-related
+          Not Job-Related
         </button>
         {error && <span className="text-xs text-rose-600">{error}</span>}
       </div>

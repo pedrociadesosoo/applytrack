@@ -18,13 +18,13 @@ export default function PrivacyPage() {
           does with your data, in plain words.
         </p>
 
-        <Section title="What ApplyTrack reads">
+        <Section title="What ApplyTrack Reads">
           When you sign in with Google, you give ApplyTrack <b>read-only</b> access to your Gmail. It searches for emails
           that look job-related (application confirmations, assessments, interviews, offers, rejections) so it can
           track your applications for you. It <b>cannot</b> send, delete, or change any email.
         </Section>
 
-        <Section title="What ApplyTrack stores">
+        <Section title="What ApplyTrack Stores">
           <ul className="list-disc space-y-1 pl-5">
             <li>Your name, email address, and profile photo from Google, so you can sign in.</li>
             <li>A Google access token, so the app can keep syncing without asking you to sign in every time. Only the server can read it.</li>
@@ -37,17 +37,17 @@ export default function PrivacyPage() {
           </ul>
         </Section>
 
-        <Section title="What ApplyTrack never does">
+        <Section title="What ApplyTrack Never Does">
           It doesn&apos;t sell or share your data, show ads, or use your emails to train AI models. Each person can only
           see their own data. That&apos;s enforced by the database itself, not just the app.
         </Section>
 
-        <Section title="Where your data lives">
+        <Section title="Where Your Data Lives">
           Data is stored with <b>Supabase</b> (the database) and the app runs on <b>Vercel</b> (hosting). Google provides
           sign-in and Gmail access.
         </Section>
 
-        <Section title="Google user data">
+        <Section title="Google User Data">
           ApplyTrack&apos;s use and transfer of information received from Google APIs adheres to the{" "}
           <a
             className="font-medium text-indigo-600 underline"
@@ -60,8 +60,8 @@ export default function PrivacyPage() {
           , including the Limited Use requirements.
         </Section>
 
-        <Section title="Deleting your data">
-          Go to <b>Settings → Delete my account</b>. That disconnects Gmail and permanently deletes your applications,
+        <Section title="Deleting Your Data">
+          Go to <b>Settings → Delete My Account</b>. That disconnects Gmail and permanently deletes your applications,
           history, saved email details, settings, and account. You can also remove ApplyTrack&apos;s Gmail access anytime
           at{" "}
           <a className="font-medium text-indigo-600 underline" href="https://myaccount.google.com/connections" target="_blank" rel="noreferrer">
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-3xl bg-white p-6 shadow-sm">
+    <section className="rounded-2xl border border-neutral-200/80 bg-white p-6">
       <h2 className="text-base font-semibold text-neutral-900">{title}</h2>
       <div className="mt-2">{children}</div>
     </section>

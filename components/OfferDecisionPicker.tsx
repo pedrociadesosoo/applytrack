@@ -45,8 +45,7 @@ export default function OfferDecisionPicker({
           key={d}
           disabled={saving}
           onClick={() => choose(d)}
-          className={`flex-1 rounded-lg border px-2 py-1.5 text-xs font-medium transition ${
-            value === d ? STYLES[d] : "border-neutral-200 text-neutral-500 hover:bg-neutral-50"
+          className={`flex-1 rounded-lg border px-2 py-1.5 text-xs font-medium transition ${ value === d ? STYLES[d] :"border-neutral-200 text-neutral-500 hover:bg-neutral-50"
           }`}
         >
           {d === "accepted" && value === d ? "✓ " : ""}

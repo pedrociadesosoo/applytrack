@@ -93,7 +93,7 @@ export default function CalendarView({
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <div className="rounded-3xl bg-white p-5 shadow-sm lg:col-span-2">
+      <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 lg:col-span-2">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-base font-semibold text-neutral-900">{format(month, "MMMM yyyy")}</h3>
           <div className="flex items-center gap-1">
@@ -109,7 +109,7 @@ export default function CalendarView({
           </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium uppercase tracking-wide text-neutral-400">
+        <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-neutral-400">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
             <div key={d} className="py-1">
               {d}
@@ -126,13 +126,11 @@ export default function CalendarView({
               <button
                 key={key}
                 onClick={() => setSelectedDay(day)}
-                className={`flex h-[4.5rem] flex-col items-start rounded-2xl border p-1.5 text-left text-xs transition ${
-                  selected ? "border-indigo-300 bg-indigo-50" : "border-transparent hover:bg-neutral-50"
+                className={`flex h-[4.5rem] flex-col items-start rounded-2xl border p-1.5 text-left text-xs transition ${ selected ?"border-indigo-300 bg-indigo-50" : "border-transparent hover:bg-neutral-50"
                 } ${!isSameMonth(day, month) ? "opacity-30" : ""}`}
               >
                 <span
-                  className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] ${
-                    isToday(day) ? "bg-neutral-900 font-semibold text-white" : "text-neutral-600"
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] ${ isToday(day) ?"bg-neutral-900 font-semibold text-white" : "text-neutral-600"
                   }`}
                 >
                   {format(day, "d")}
@@ -166,12 +164,12 @@ export default function CalendarView({
         )}
       </div>
 
-      <div className="rounded-3xl bg-white p-5 shadow-sm">
-        <h3 className="text-base font-semibold text-neutral-900">Suggested for you</h3>
+      <div className="rounded-2xl border border-neutral-200/80 bg-white p-5">
+        <h3 className="text-base font-semibold text-neutral-900">Suggested for You</h3>
         <p className="mt-0.5 text-xs text-neutral-500">Check-ins based on where each application is.</p>
 
         {overdue.length + soon.length === 0 ? (
-          <p className="mt-6 text-sm text-neutral-400">You&apos;re all caught up. 🎉</p>
+          <p className="mt-6 text-sm text-neutral-400">You&apos;re all caught up.</p>
         ) : (
           <ul className="mt-4 space-y-2">
             {overdue.map((s) => (
@@ -187,7 +185,7 @@ export default function CalendarView({
             onClick={() => setShowAll((v) => !v)}
             className="mt-3 w-full rounded-full border border-neutral-200 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-50"
           >
-            {showAll ? "Show less" : `Show ${hiddenCount} more`}
+            {showAll ? "Show Less" : `Show ${hiddenCount} More`}
           </button>
         )}
       </div>
@@ -214,7 +212,7 @@ function SuggestionRow({
         <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold text-neutral-800" style={{ background: `var(--tile-${style.tint})` }}>
           {style.label}
         </span>
-        <span className={`text-[11px] font-medium ${overdue ? "text-rose-600" : "text-neutral-400"}`}>
+        <span className={`text-[11px] font-medium ${overdue ?"text-rose-600" : "text-neutral-400"}`}>
           {s.date === today ? "Today" : overdue ? `Since ${formatDate(s.date)}` : formatDate(s.date)}
         </span>
       </div>
@@ -224,7 +222,7 @@ function SuggestionRow({
       <p className="mt-0.5 text-xs text-neutral-500">{s.detail}</p>
       <div className="mt-2 flex gap-1.5">
         <button onClick={() => onDismiss(s.key)} className="rounded-full bg-neutral-900 px-3 py-1 text-[11px] font-semibold text-white hover:bg-neutral-800">
-          Done ✓
+          Done
         </button>
         <button onClick={() => onDismiss(s.key)} className="rounded-full px-3 py-1 text-[11px] font-medium text-neutral-500 hover:bg-neutral-100">
           Skip

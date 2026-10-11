@@ -16,15 +16,15 @@ export default function StatTile({
   attention?: boolean;
   onClick?: () => void;
 }) {
-  const base = "group relative flex min-h-[8.5rem] flex-col rounded-3xl p-5 text-left transition";
+  const base = "group relative flex min-h-[8.5rem] flex-col rounded-2xl p-5 text-left transition";
   const style = { background: `var(--tile-${tint})` };
   const body = (
     <>
       <p className="flex items-start justify-between gap-2 text-sm font-semibold text-neutral-800">
         <span>{label}</span>
         {attention && (
-          <span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-700">
-            Needs you
+          <span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-semibold text-neutral-700">
+            Needs You
           </span>
         )}
       </p>
@@ -33,7 +33,7 @@ export default function StatTile({
         <span>{caption}</span>
         {onClick && (
           <span className="rounded-full bg-white/70 px-2 py-0.5 font-semibold opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
-            Details →
+            View Details
           </span>
         )}
       </p>
@@ -45,7 +45,7 @@ export default function StatTile({
     <button
       onClick={onClick}
       style={style}
-      className={`${base} cursor-pointer hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900`}
+      className={`${base} cursor-pointer hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900`}
     >
       {body}
     </button>

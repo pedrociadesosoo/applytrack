@@ -12,9 +12,9 @@ export interface ShellUser {
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: IconHome },
-  { href: "/review", label: "Review emails", icon: IconInbox },
-  { href: "/applications/new", label: "Add application", icon: IconPlus },
-  { href: "/guide", label: "How it works", icon: IconHelp },
+  { href: "/review", label: "Review Emails", icon: IconInbox },
+  { href: "/applications/new", label: "Add Application", icon: IconPlus },
+  { href: "/guide", label: "How It Works", icon: IconHelp },
   { href: "/settings", label: "Settings", icon: IconSettings },
 ];
 
@@ -46,9 +46,7 @@ export default function AppShell({ user, children }: { user: ShellUser | null; c
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium transition ${
-                isActive(href)
-                  ? "bg-neutral-900 text-white shadow-sm"
+              className={`flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium transition ${ isActive(href) ?"bg-neutral-900 text-white shadow-sm"
                   : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
               }`}
             >
@@ -64,7 +62,7 @@ export default function AppShell({ user, children }: { user: ShellUser | null; c
             className="flex w-full items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900"
           >
             <IconLogout />
-            {user.demo ? "Exit demo" : "Sign out"}
+            {user.demo ? "Exit Demo" : "Sign Out"}
           </button>
         </form>
       </aside>
@@ -82,8 +80,7 @@ export default function AppShell({ user, children }: { user: ShellUser | null; c
             <Link
               key={href}
               href={href}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium ${
-                isActive(href) ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"
+              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium ${ isActive(href) ?"bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"
               }`}
             >
               {label}
@@ -97,7 +94,7 @@ export default function AppShell({ user, children }: { user: ShellUser | null; c
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-neutral-900 px-4 py-2 text-center text-xs text-white">
             <span>You&apos;re viewing a demo with sample data. Changes aren&apos;t saved.</span>
             <a href="/login" className="font-semibold underline">
-              Sign in to track your own →
+              Sign In to Track Your Own
             </a>
           </div>
         )}

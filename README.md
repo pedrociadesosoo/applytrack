@@ -2,6 +2,8 @@
 
 **A job application tracker that updates itself from your Gmail.**
 
+🌐 **Live app:** [applytrack-rho.vercel.app](https://applytrack-rho.vercel.app) (invite-only for now while the Google sign-in is in testing; message me and I'll add you)
+
 I was applying to a lot of internships and my spreadsheet kept falling behind. I'd get an OA invite or a rejection email and forget to update the row. So I built ApplyTrack. It reads my job emails, adds new applications on its own, and moves each one through the stages (applied → OA → HireVue → interviews → offer or rejection). I just open the dashboard and see where everything stands.
 
 But tracking applications can feel heavy. Most trackers end up as a list of rejections, and that wears you down. I wanted ApplyTrack to feel calm and encouraging instead, something that reminds you there's hope even when an email says no.

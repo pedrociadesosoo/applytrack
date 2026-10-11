@@ -55,7 +55,8 @@ export const STAGE_COLORS: Record<ApplicationStage, string> = {
   hirevue: "bg-teal-100 text-teal-800 border-teal-200",
   phone_screen: "bg-sky-100 text-sky-800 border-sky-200",
   behavioral: "bg-violet-100 text-violet-800 border-violet-200",
-  technical_interview: "bg-indigo-100 text-indigo-800 border-indigo-200",
+  // Not indigo: indigo is re-themed as each theme's accent color.
+  technical_interview: "bg-blue-100 text-blue-800 border-blue-200",
   onsite: "bg-purple-100 text-purple-800 border-purple-200",
   offer: "bg-emerald-100 text-emerald-800 border-emerald-200",
   rejected: "bg-rose-100 text-rose-700 border-rose-200",

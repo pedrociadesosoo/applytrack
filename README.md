@@ -18,6 +18,9 @@ I was applying to a lot of internships and my spreadsheet kept falling behind. I
 - **Offer decisions.** When you get an offer, mark it as Deciding, Accepted, or Declined in one click. The badge updates everywhere, and once you've accepted or declined, it stops counting as an open application.
 - **Job description archive.** You can save the full job posting with each application, since postings disappear once a role closes. It's searchable, so "SQL" shows every role that asked for SQL.
 - **Four views:** cards, kanban (drag cards between stages), table, and calendar.
+- **Journey for every application.** Each stage it went through shows as a pill (Applied › OA › HireVue › Offer). Hover one to see when it happened, and edit the journey if anything is off.
+- **Smart calendar.** It suggests check-ins on its own: finish your OA, prep for interviews, follow up when things go quiet, decide on offers.
+- **Make it yours.** A greeting that changes with the time of day, a verse of the day or encouraging words (or off), and themes including Blush, Coffee, Dark, and Leopard.
 - **Search** that just shows company, role, and status.
 
 ---
@@ -108,6 +111,8 @@ Create a Supabase project. In its **SQL Editor**, run these files from the `supa
 5. `migrations/005_hirevue_stage.sql` (run this one by itself)
 6. `migrations/006_progress_view_hirevue.sql`
 7. `migrations/007_offer_decision.sql`
+8. `migrations/008_dismissed_suggestions.sql`
+9. `migrations/009_recompute_stage.sql`
 
 Then copy your **Project URL**, **anon key**, and **service_role key** (Project Settings → API) into `.env.local`.
 

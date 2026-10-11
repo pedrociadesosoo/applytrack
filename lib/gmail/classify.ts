@@ -148,6 +148,7 @@ const STAGE_RULES: Rule[] = [
       /received your application/i,
       /application (?:has been |was )?(?:received|submitted)/i,
       /your application was sent to/i,
+      /application (?:for|to|with|at) .{1,60}?\b(?:received|submitted)\b/i,
       /application confirmation/i,
       /thank(?:s| you) for your interest in (?:joining|working|the|our|a career)/i,
     ],
@@ -260,6 +261,7 @@ function isGenericDomain(domain: string) {
 
 const SUBJECT_COMPANY: RegExp[] = [
   /your application was sent to (.+)$/i,
+  /application (?:for|to|with|at) (.+?)\s+(?:received|submitted|confirmation)\b/i,
   /thank(?:s| you) for (?:applying|your application|your interest)(?: to| in| with| at)? (.+?)\s*(?:[!.|]|$| - | – )/i,
   /your application (?:to|with|at|for) (.+?)\s*(?:[!.|]|$| - | – )/i,
   /^(.+?)\s+(?:has\s+)?invit(?:es|ed) you\b/i,
@@ -303,6 +305,7 @@ const COMPANY_ALIASES: Record<string, string> = {
   amex: "American Express", americanexpress: "American Express", aexp: "American Express",
   pwc: "PwC", ey: "EY", kpmg: "KPMG", ibm: "IBM", citi: "Citi", citigroup: "Citi",
   bny: "BNY", bnymellon: "BNY", statestreet: "State Street", blackrock: "BlackRock",
+  pru: "Prudential", prudentialfinancial: "Prudential",
   smbc: "SMBC", mufg: "MUFG", rbc: "RBC", td: "TD", bmo: "BMO", ubs: "UBS",
 };
 
@@ -330,7 +333,7 @@ function extractCompanyRaw(email: EmailForClassification): string | null {
   const fromName = name
     .replace(/\s+via\s+.+$/i, "")
     .replace(/^[A-Z][a-z]+(?: [A-Z][a-z]+)? from\s+/, "")
-    .replace(/\b(?:university|campus|early careers?|global|programs?|recruiting|recruitment|careers?|talent(?: acquisition)?|hiring(?: team)?|jobs|hr|team|no-?reply|notifications?)\b/gi, "")
+    .replace(/\b(?:university|campus|early careers?|global|programs?|recruiting|recruitment|career ?connect|careers?|talent(?: acquisition)?|hiring(?: team)?|jobs|hr|team|no-?reply|notifications?)\b/gi, "")
     .replace(/[@|·•-]+\s*$/, "")
     .replace(/\s{2,}/g, " ")
     .trim();

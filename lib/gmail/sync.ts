@@ -1,7 +1,7 @@
 import { createAdminSupabaseClient, createServerSupabaseClient } from "@/lib/supabase/server";
 import { classifyEmail } from "@/lib/gmail/classify";
 import { getAccessToken, getMessage, listMessageIds, mapWithConcurrency } from "@/lib/gmail/client";
-import { applySignal, type AppRow } from "@/lib/gmail/apply";
+import { applySignal, findMatch, type AppRow } from "@/lib/gmail/apply";
 
 // First sync looks back to the start of this recruiting season.
 const BACKFILL_FROM = new Date("2026-08-01T00:00:00Z");
@@ -105,11 +105,18 @@ export async function runGmailSync(): Promise<SyncResult> {
 
     let status: string;
     let applicationId: string | null = null;
+    let reason = c.reason;
 
     if (c.kind === "unrelated") {
       status = "ignored";
     } else if (c.confidence === "low" || !c.company || !c.stage) {
       status = "pending_review";
+    } else if (c.kind === "stage" && !findMatch(apps, c.company, c.role)) {
+      // An OA/interview/rejection for a company you have no application with
+      // is usually a name mismatch ("Pru" vs "Prudential"), so ask instead of
+      // creating a duplicate.
+      status = "pending_review";
+      reason = `${c.reason}; no application found for "${c.company}" (new, or a different name?)`;
     } else {
       const { outcome, applicationId: id } = await applySignal(supabase, apps, {
         kind: c.kind,
@@ -141,7 +148,7 @@ export async function runGmailSync(): Promise<SyncResult> {
       company_guess: c.company,
       role_guess: c.role,
       confidence: c.confidence,
-      reason: c.reason,
+      reason,
       status,
       application_id: applicationId,
     });

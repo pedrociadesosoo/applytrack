@@ -9,6 +9,7 @@ import DeleteApplicationButton from "@/components/DeleteApplicationButton";
 import { ghostDeadline } from "@/lib/ghosting";
 import OfferDecisionPicker from "@/components/OfferDecisionPicker";
 import StageJourney from "@/components/StageJourney";
+import MergeApplication from "@/components/MergeApplication";
 
 export default async function ApplicationDetailPage({
   params,
@@ -150,6 +151,9 @@ export default async function ApplicationDetailPage({
               <Row label="Email" value={application.contact_email} />
             </dl>
           </InfoBlock>
+          <div className="px-1">
+            <MergeApplication application={application} />
+          </div>
         </aside>
       </div>
     </div>

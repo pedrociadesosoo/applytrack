@@ -12,6 +12,7 @@ import CalendarView from "@/components/CalendarView";
 import PipelineOverview from "@/components/PipelineOverview";
 import StatTile from "@/components/StatTile";
 import DashboardHeader from "@/components/DashboardHeader";
+import WelcomeCard from "@/components/WelcomeCard";
 import Drawer from "@/components/Drawer";
 import ResponseBreakdown from "@/components/ResponseBreakdown";
 import StaleList from "@/components/StaleList";
@@ -156,6 +157,8 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      <WelcomeCard />
 
       {reviewCount > 0 && (
         <Link

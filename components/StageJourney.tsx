@@ -52,7 +52,7 @@ export default function StageJourney({
             )}
             <span
               tabIndex={0}
-              className={`group relative inline-flex cursor-default items-center whitespace-nowrap rounded-full border font-medium outline-none transition hover:-translate-y-0.5 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-400 ${pill} ${pillStyle(
+              className={`group/pill relative inline-flex cursor-default items-center whitespace-nowrap rounded-full border font-medium outline-none transition hover:-translate-y-0.5 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-400 ${pill} ${pillStyle(
                 step.stage,
                 step.stage === "offer" ? decision : undefined
               )} ${isCurrent ? "font-semibold shadow-sm" : "opacity-80"}`}
@@ -60,7 +60,7 @@ export default function StageJourney({
               {pillLabel(step.stage, step.stage === "offer" ? decision : undefined)}
               <span
                 role="tooltip"
-                className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-max max-w-[15rem] -translate-x-1/2 translate-y-1 rounded-xl bg-neutral-900 px-3 py-2 text-left text-[11px] font-normal leading-snug whitespace-normal text-white opacity-0 shadow-lg transition group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100"
+                className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-max max-w-[15rem] -translate-x-1/2 translate-y-1 rounded-xl bg-neutral-900 px-3 py-2 text-left text-[11px] font-normal leading-snug whitespace-normal text-white opacity-0 shadow-lg transition group-hover/pill:translate-y-0 group-hover/pill:opacity-100 group-focus/pill:translate-y-0 group-focus/pill:opacity-100"
               >
                 <span className="block font-semibold">
                   {step.date ? formatDate(step.date) : "Current stage"}

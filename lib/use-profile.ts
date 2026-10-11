@@ -9,6 +9,7 @@ export interface Profile {
   theme: ThemeId;
   encouragement: EncouragementMode;
   displayName: string;
+  onboarded: boolean;
 }
 
 // The signed-in user's name and preferences, read from their auth metadata.
@@ -26,6 +27,7 @@ export function useProfile(): Profile | null {
           theme: themeFrom(meta),
           encouragement: encouragementFrom(meta),
           displayName: typeof meta.display_name === "string" ? meta.display_name : "",
+          onboarded: meta.onboarded === true,
         });
       });
     return () => {

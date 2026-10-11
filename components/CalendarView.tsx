@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   addMonths,
   eachDayOfInterval,
@@ -15,10 +15,20 @@ import {
   subMonths,
 } from "date-fns";
 import type { Application } from "@/lib/types";
-import { buildCalendarEvents } from "@/lib/calendar";
+import { buildSuggestions, type Suggestion } from "@/lib/suggestions";
 import { formatDate } from "@/lib/format";
-import StageBadge from "@/components/StageBadge";
 
+const KIND_STYLE: Record<Suggestion["kind"], { label: string; tint: 1 | 2 | 3 | 4 }> = {
+  finish: { label: "To do", tint: 1 },
+  prep: { label: "Prep", tint: 3 },
+  check_in: { label: "Check in", tint: 4 },
+  follow_up: { label: "Follow up", tint: 4 },
+  decide: { label: "Decide", tint: 2 },
+  ghost_soon: { label: "Heads-up", tint: 2 },
+  yours: { label: "Your reminder", tint: 1 },
+};
+
+// Calendar of check-ins ApplyTrack suggests (plus reminders you set).
 export default function CalendarView({
   applications,
   onQuickView,
@@ -28,58 +38,63 @@ export default function CalendarView({
 }) {
   const [month, setMonth] = useState(() => new Date());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
-  const events = useMemo(() => buildCalendarEvents(applications), [applications]);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/suggestions")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled && d.dismissed) setDismissed(new Set(d.dismissed));
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const today = format(new Date(), "yyyy-MM-dd");
+  const suggestions = useMemo(
+    () => buildSuggestions(applications, today).filter((s) => !dismissed.has(s.key)),
+    [applications, today, dismissed]
+  );
+
+  const byDay = useMemo(() => {
+    const map = new Map<string, Suggestion[]>();
+    for (const s of suggestions) map.set(s.date, [...(map.get(s.date) ?? []), s]);
+    return map;
+  }, [suggestions]);
+
+  const overdue = suggestions.filter((s) => s.date < today);
+  const soon = suggestions.filter((s) => s.date >= today).slice(0, 10);
+
+  async function dismiss(key: string) {
+    setDismissed((prev) => new Set(prev).add(key));
+    await fetch("/api/suggestions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key }),
+    }).catch(() => {});
+  }
 
   const gridStart = startOfWeek(startOfMonth(month));
   const gridEnd = endOfWeek(endOfMonth(month));
   const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
-
-  const eventsByDay = useMemo(() => {
-    const map = new Map<string, typeof events>();
-    for (const event of events) {
-      const key = event.date;
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(event);
-    }
-    return map;
-  }, [events]);
-
-  const upcoming = useMemo(
-    () =>
-      [...events]
-        .filter((e) => new Date(e.date).getTime() >= new Date().setHours(0, 0, 0, 0))
-        .sort((a, b) => a.date.localeCompare(b.date))
-        .slice(0, 8),
-    [events]
-  );
-
-  const selectedEvents = selectedDay
-    ? eventsByDay.get(format(selectedDay, "yyyy-MM-dd")) ?? []
-    : [];
+  const selectedItems = selectedDay ? byDay.get(format(selectedDay, "yyyy-MM-dd")) ?? [] : [];
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <div className="rounded-3xl border border-neutral-200/70 bg-white p-4 lg:col-span-2">
+      <div className="rounded-3xl bg-white p-5 shadow-sm lg:col-span-2">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-neutral-900">{format(month, "MMMM yyyy")}</h3>
+          <h3 className="text-base font-semibold text-neutral-900">{format(month, "MMMM yyyy")}</h3>
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => setMonth((m) => subMonths(m, 1))}
-              className="rounded-md px-2 py-1 text-sm text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
-            >
+            <button onClick={() => setMonth((m) => subMonths(m, 1))} className="rounded-full px-2.5 py-1 text-sm text-neutral-500 hover:bg-neutral-100" aria-label="Previous month">
               ←
             </button>
-            <button
-              onClick={() => setMonth(new Date())}
-              className="rounded-md px-2 py-1 text-xs font-medium text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
-            >
+            <button onClick={() => setMonth(new Date())} className="rounded-full px-3 py-1 text-xs font-medium text-neutral-500 hover:bg-neutral-100">
               Today
             </button>
-            <button
-              onClick={() => setMonth((m) => addMonths(m, 1))}
-              className="rounded-md px-2 py-1 text-sm text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
-            >
+            <button onClick={() => setMonth((m) => addMonths(m, 1))} className="rounded-full px-2.5 py-1 text-sm text-neutral-500 hover:bg-neutral-100" aria-label="Next month">
               →
             </button>
           </div>
@@ -96,30 +111,29 @@ export default function CalendarView({
         <div className="grid grid-cols-7 gap-1">
           {days.map((day) => {
             const key = format(day, "yyyy-MM-dd");
-            const dayEvents = eventsByDay.get(key) ?? [];
-            const inMonth = isSameMonth(day, month);
+            const items = byDay.get(key) ?? [];
             const selected = selectedDay && isSameDay(day, selectedDay);
-
             return (
               <button
                 key={key}
                 onClick={() => setSelectedDay(day)}
-                className={`flex h-16 flex-col items-start rounded-lg border p-1.5 text-left text-xs transition ${
-                  selected
-                    ? "border-indigo-300 bg-indigo-50"
-                    : "border-transparent hover:border-neutral-200 hover:bg-neutral-50"
-                } ${!inMonth ? "opacity-30" : ""}`}
+                className={`flex h-[4.5rem] flex-col items-start rounded-2xl border p-1.5 text-left text-xs transition ${
+                  selected ? "border-indigo-300 bg-indigo-50" : "border-transparent hover:bg-neutral-50"
+                } ${!isSameMonth(day, month) ? "opacity-30" : ""}`}
               >
                 <span
-                  className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] ${
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] ${
                     isToday(day) ? "bg-neutral-900 font-semibold text-white" : "text-neutral-600"
                   }`}
                 >
                   {format(day, "d")}
                 </span>
-                {dayEvents.length > 0 && (
-                  <span className="mt-1 rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
-                    {dayEvents.length} due
+                {items.length > 0 && (
+                  <span
+                    className="mt-auto w-full truncate rounded-full px-1.5 py-0.5 text-[10px] font-semibold text-neutral-800"
+                    style={{ background: `var(--tile-${KIND_STYLE[items[0].kind].tint})` }}
+                  >
+                    {items.length === 1 ? KIND_STYLE[items[0].kind].label : `${items.length} to do`}
                   </span>
                 )}
               </button>
@@ -128,26 +142,14 @@ export default function CalendarView({
         </div>
 
         {selectedDay && (
-          <div className="mt-4 border-t border-neutral-100 pt-3">
-            <p className="mb-2 text-xs font-medium text-neutral-500">
-              {format(selectedDay, "EEEE, MMM d")}
-            </p>
-            {selectedEvents.length === 0 ? (
-              <p className="text-xs text-neutral-300">Nothing due this day.</p>
+          <div className="mt-4 border-t border-neutral-100 pt-4">
+            <p className="mb-2 text-xs font-semibold text-neutral-500">{format(selectedDay, "EEEE, MMM d")}</p>
+            {selectedItems.length === 0 ? (
+              <p className="text-xs text-neutral-400">Nothing planned. Enjoy the breather.</p>
             ) : (
-              <ul className="space-y-1.5">
-                {selectedEvents.map((event, i) => (
-                  <li key={i}>
-                    <button
-                      onClick={() => onQuickView(event.application)}
-                      className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-xs hover:bg-neutral-50"
-                    >
-                      <span className="text-neutral-700">
-                        {event.application.company} — {event.label}
-                      </span>
-                      <StageBadge stage={event.application.current_stage} decision={event.application.offer_decision} />
-                    </button>
-                  </li>
+              <ul className="space-y-2">
+                {selectedItems.map((s) => (
+                  <SuggestionRow key={s.key} s={s} today={today} onOpen={onQuickView} onDismiss={dismiss} />
                 ))}
               </ul>
             )}
@@ -155,29 +157,62 @@ export default function CalendarView({
         )}
       </div>
 
-      <div className="rounded-3xl border border-neutral-200/70 bg-white p-4">
-        <h3 className="mb-3 text-sm font-semibold text-neutral-900">Upcoming</h3>
-        {upcoming.length === 0 ? (
-          <p className="text-xs text-neutral-300">No upcoming deadlines set.</p>
+      <div className="rounded-3xl bg-white p-5 shadow-sm">
+        <h3 className="text-base font-semibold text-neutral-900">Suggested for you</h3>
+        <p className="mt-0.5 text-xs text-neutral-500">Check-ins based on where each application is.</p>
+
+        {overdue.length + soon.length === 0 ? (
+          <p className="mt-6 text-sm text-neutral-400">You&apos;re all caught up. 🎉</p>
         ) : (
-          <ul className="space-y-2">
-            {upcoming.map((event, i) => (
-              <li key={i}>
-                <button
-                  onClick={() => onQuickView(event.application)}
-                  className="flex w-full flex-col items-start rounded-lg border border-neutral-100 px-3 py-2 text-left hover:bg-neutral-50"
-                >
-                  <span className="text-xs font-medium text-neutral-400">{formatDate(event.date)}</span>
-                  <span className="text-sm text-neutral-800">
-                    {event.application.company} — {event.application.role_title}
-                  </span>
-                  <span className="text-xs text-neutral-500">{event.label}</span>
-                </button>
-              </li>
+          <ul className="mt-4 space-y-2">
+            {overdue.map((s) => (
+              <SuggestionRow key={s.key} s={s} today={today} onOpen={onQuickView} onDismiss={dismiss} />
+            ))}
+            {soon.map((s) => (
+              <SuggestionRow key={s.key} s={s} today={today} onOpen={onQuickView} onDismiss={dismiss} />
             ))}
           </ul>
         )}
       </div>
     </div>
+  );
+}
+
+function SuggestionRow({
+  s,
+  today,
+  onOpen,
+  onDismiss,
+}: {
+  s: Suggestion;
+  today: string;
+  onOpen: (a: Application) => void;
+  onDismiss: (key: string) => void;
+}) {
+  const style = KIND_STYLE[s.kind];
+  const overdue = s.date < today;
+  return (
+    <li className="rounded-2xl border border-neutral-100 p-3">
+      <div className="flex items-center gap-2">
+        <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold text-neutral-800" style={{ background: `var(--tile-${style.tint})` }}>
+          {style.label}
+        </span>
+        <span className={`text-[11px] font-medium ${overdue ? "text-rose-600" : "text-neutral-400"}`}>
+          {s.date === today ? "Today" : overdue ? `Since ${formatDate(s.date)}` : formatDate(s.date)}
+        </span>
+      </div>
+      <button onClick={() => onOpen(s.application)} className="mt-1.5 block text-left text-sm font-medium text-neutral-900 hover:text-indigo-600">
+        {s.title}
+      </button>
+      <p className="mt-0.5 text-xs text-neutral-500">{s.detail}</p>
+      <div className="mt-2 flex gap-1.5">
+        <button onClick={() => onDismiss(s.key)} className="rounded-full bg-neutral-900 px-3 py-1 text-[11px] font-semibold text-white hover:bg-neutral-800">
+          Done ✓
+        </button>
+        <button onClick={() => onDismiss(s.key)} className="rounded-full px-3 py-1 text-[11px] font-medium text-neutral-500 hover:bg-neutral-100">
+          Skip
+        </button>
+      </div>
+    </li>
   );
 }

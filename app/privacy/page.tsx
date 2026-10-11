@@ -71,9 +71,9 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="Questions">
-          ApplyTrack is built by Pedrocia De-Sosoo. Reach out through{" "}
-          <a className="font-medium text-indigo-600 underline" href="https://github.com/pedrociadesosoo/applytrack" target="_blank" rel="noreferrer">
-            the project on GitHub
+          ApplyTrack is built by Pedrocia De-Sosoo. Reach out at{" "}
+          <a className="font-medium text-indigo-600 underline" href="mailto:desosoop7@gmail.com">
+            desosoop7@gmail.com
           </a>
           .
         </Section>

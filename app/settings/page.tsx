@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { useProfile } from "@/lib/use-profile";
 import { THEMES, type EncouragementMode, type ThemeId } from "@/lib/themes";
@@ -129,6 +130,12 @@ export default function SettingsPage() {
         </button>
         {status === "saved" && <span className="text-sm text-neutral-600">Saved ✓</span>}
         {status === "error" && <span className="text-sm text-rose-600">Couldn&apos;t save. Try again.</span>}
+        <Link
+          href="/"
+          className="ml-auto rounded-full border border-neutral-200 px-5 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-white"
+        >
+          Go to my dashboard →
+        </Link>
       </div>
     </div>
   );

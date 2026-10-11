@@ -5,8 +5,9 @@ import { applySignal, findMatch, type AppRow } from "@/lib/gmail/apply";
 
 // First sync looks back to the start of this recruiting season.
 const BACKFILL_FROM = new Date("2026-08-01T00:00:00Z");
-// Keeps one sync run to a reasonable length; press Sync again for the rest.
-const MAX_PER_RUN = 150;
+// Keeps one sync run well inside a hosted server's time limit; press Sync
+// again to continue (the button says how many are left).
+const MAX_PER_RUN = 60;
 
 // Narrow the inbox to likely candidates before downloading anything.
 // The classifier makes the real call; this just skips obvious noise.

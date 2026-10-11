@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import AppShell from "@/components/AppShell";
-import { firstNameFrom, themeFrom } from "@/lib/themes";
+import { DEMO_PREFS_COOKIE, firstNameFrom, parseDemoPrefs, themeFrom } from "@/lib/themes";
 import { cookies } from "next/headers";
 import { DEMO_COOKIE } from "@/lib/demo";
 
@@ -21,10 +21,12 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
   const meta = user?.user_metadata as Record<string, unknown> | undefined;
-  const demo = !user && (await cookies()).get(DEMO_COOKIE)?.value === "1";
+  const jar = await cookies();
+  const demo = !user && jar.get(DEMO_COOKIE)?.value === "1";
+  const themeMeta = demo ? parseDemoPrefs(jar.get(DEMO_PREFS_COOKIE)?.value) : meta;
 
   return (
-    <html lang="en" data-theme={themeFrom(meta)} className="h-full antialiased">
+    <html lang="en" data-theme={themeFrom(themeMeta)} className="h-full antialiased">
       <body className="flex min-h-full flex-col bg-neutral-50 text-neutral-900">
         <AppShell
           user={

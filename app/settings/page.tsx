@@ -6,7 +6,7 @@ import Link from "next/link";
 import DeleteAccount from "@/components/DeleteAccount";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { useProfile } from "@/lib/use-profile";
-import { THEMES, type EncouragementMode, type ThemeId } from "@/lib/themes";
+import { THEMES, writeDemoPrefsCookie, type EncouragementMode, type ThemeId } from "@/lib/themes";
 
 const ENCOURAGEMENT_OPTIONS: { id: EncouragementMode; label: string; hint: string }[] = [
   { id: "scripture", label: "Scripture", hint: "A Bible verse for the day, and for rejections, progress, and offers" },
@@ -33,7 +33,10 @@ export default function SettingsPage() {
 
   async function save() {
     if (profile?.demo) {
+      // Demo: remember choices for this browser session only.
+      writeDemoPrefsCookie({ theme: currentTheme, encouragement: currentEnc, display_name: currentName.trim() || null });
       setStatus("saved");
+      router.refresh();
       return;
     }
     setStatus("saving");
@@ -134,7 +137,7 @@ export default function SettingsPage() {
           {status === "saving" ? "Saving…" : "Save changes"}
         </button>
         {status === "saved" && (
-          <span className="text-sm text-neutral-600">{profile.demo ? "Looks good! (Demo: not saved)" : "Saved ✓"}</span>
+          <span className="text-sm text-neutral-600">{profile.demo ? "Saved for this visit ✓" : "Saved ✓"}</span>
         )}
         {status === "error" && <span className="text-sm text-rose-600">Couldn&apos;t save. Try again.</span>}
         <Link

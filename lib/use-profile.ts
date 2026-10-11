@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
-import { encouragementFrom, firstNameFrom, themeFrom, type EncouragementMode, type ThemeId } from "@/lib/themes";
+import { encouragementFrom, firstNameFrom, readDemoPrefsCookie, themeFrom, type EncouragementMode, type ThemeId } from "@/lib/themes";
 
 export interface Profile {
   firstName: string;
@@ -24,11 +24,13 @@ export function useProfile(): Profile | null {
         if (cancelled) return;
         if (!data.user) {
           if (document.cookie.includes("applytrack_demo=1")) {
+            const prefs = readDemoPrefsCookie();
+            const displayName = typeof prefs.display_name === "string" ? prefs.display_name : "";
             setProfile({
-              firstName: "",
-              theme: (document.documentElement.dataset.theme as ThemeId) ?? "blush",
-              encouragement: "scripture",
-              displayName: "",
+              firstName: displayName.trim().split(/\s+/)[0] ?? "",
+              theme: themeFrom(prefs),
+              encouragement: encouragementFrom(prefs),
+              displayName,
               onboarded: false,
               demo: true,
             });

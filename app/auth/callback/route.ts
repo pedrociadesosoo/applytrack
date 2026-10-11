@@ -31,5 +31,6 @@ export async function GET(request: NextRequest) {
 
   const res = NextResponse.redirect(`${origin}/`);
   res.cookies.delete("applytrack_demo"); // a real sign-in ends the demo
+  res.cookies.delete("applytrack_demo_prefs");
   return res;
 }

@@ -18,6 +18,29 @@ export const THEMES: { id: ThemeId; name: string; swatches: string[] }[] = [
   { id: "classic", name: "Classic", swatches: ["#fafafa", "#4f46e5", "#e5e5e5", "#171717"] },
 ];
 
+// Demo visitors have no account, so their Settings choices live in a
+// browser-session cookie with the same shape as the account metadata.
+export const DEMO_PREFS_COOKIE = "applytrack_demo_prefs";
+
+export function parseDemoPrefs(value: string | undefined | null): Record<string, unknown> {
+  if (!value) return {};
+  try {
+    const parsed = JSON.parse(decodeURIComponent(value));
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+export function readDemoPrefsCookie(): Record<string, unknown> {
+  const match = document.cookie.split("; ").find((c) => c.startsWith(`${DEMO_PREFS_COOKIE}=`));
+  return parseDemoPrefs(match?.slice(DEMO_PREFS_COOKIE.length + 1));
+}
+
+export function writeDemoPrefsCookie(prefs: Record<string, unknown>) {
+  document.cookie = `${DEMO_PREFS_COOKIE}=${encodeURIComponent(JSON.stringify(prefs))}; path=/; samesite=lax`;
+}
+
 export function themeFrom(meta: Record<string, unknown> | undefined): ThemeId {
   const t = meta?.theme;
   return THEMES.some((x) => x.id === t) ? (t as ThemeId) : DEFAULT_THEME;

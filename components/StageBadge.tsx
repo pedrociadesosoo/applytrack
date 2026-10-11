@@ -8,6 +8,16 @@ const OFFER_DECISION_COLORS: Record<OfferDecision, string> = {
   declined: "bg-neutral-100 text-neutral-600 border-neutral-300",
 };
 
+export function pillStyle(stage: ApplicationStage, decision?: OfferDecision | null) {
+  return stage === "offer" ? OFFER_DECISION_COLORS[decision ?? "pending"] : STAGE_COLORS[stage];
+}
+
+export function pillLabel(stage: ApplicationStage, decision?: OfferDecision | null) {
+  if (stage !== "offer") return STAGE_LABELS[stage];
+  const d = decision ?? "pending";
+  return `${d === "accepted" ? "✓ " : ""}Offer · ${OFFER_DECISION_LABELS[d]}`;
+}
+
 export default function StageBadge({
   stage,
   decision,

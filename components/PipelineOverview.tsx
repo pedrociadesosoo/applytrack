@@ -34,7 +34,7 @@ export default function PipelineOverview({
   const toggle = (s: string) => onSelect(selected === s ? "" : s);
 
   return (
-    <section className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
+    <section className="rounded-3xl bg-white p-5 shadow-sm">
       <div className="mb-3 flex items-baseline justify-between">
         <h3 className="text-sm font-semibold text-neutral-900">Where things stand</h3>
         {selected ? (
@@ -56,7 +56,7 @@ export default function PipelineOverview({
               <button
                 onClick={() => toggle(stage)}
                 title={`${count} application${count === 1 ? "" : "s"} currently at ${STAGE_LABELS[stage]}`}
-                className={`relative flex h-full w-full flex-col rounded-lg border px-3 py-2.5 text-left transition ${
+                className={`relative flex h-full w-full flex-col rounded-2xl border px-3 py-2.5 text-left transition ${
                   isSelected
                     ? "border-indigo-400 bg-indigo-50/60 ring-1 ring-indigo-400"
                     : "border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50"
@@ -83,7 +83,7 @@ export default function PipelineOverview({
                 <span className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100">
                   <span
                     className="block h-full rounded-full transition-all"
-                    style={{ width: `${(count / max) * 100}%`, background: "#2a78d6" }}
+                    style={{ width: `${(count / max) * 100}%`, background: "var(--color-indigo-500)" }}
                   />
                 </span>
               </button>

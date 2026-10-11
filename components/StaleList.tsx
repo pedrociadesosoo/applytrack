@@ -48,9 +48,13 @@ export default function StaleList({ items, onChanged }: { items: StaleItem[]; on
     <ul className="space-y-3">
       {items.map((item) => {
         const urgency =
-          item.daysIdle >= 21 ? "bg-rose-500" : item.daysIdle >= 14 ? "bg-amber-400" : "bg-amber-200";
+          item.daysIdle >= 21
+            ? { cls: "bg-rose-100 text-rose-700", label: "Overdue" }
+            : item.daysIdle >= 14
+              ? { cls: "bg-amber-100 text-amber-800", label: "Follow up" }
+              : { cls: "bg-neutral-100 text-neutral-600", label: "Check in" };
         return (
-          <li key={item.id} className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
+          <li key={item.id} className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">{item.company}</p>
@@ -67,10 +71,10 @@ export default function StaleList({ items, onChanged }: { items: StaleItem[]; on
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-xl font-semibold tabular-nums text-neutral-900">{item.daysIdle}d</p>
-                <p className="flex items-center justify-end gap-1 text-[11px] text-neutral-400">
-                  <span className={`h-1.5 w-1.5 rounded-full ${urgency}`} aria-hidden />
-                  since last update
-                </p>
+                <p className="text-[11px] text-neutral-400">since last update</p>
+                <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${urgency.cls}`}>
+                  {urgency.label}
+                </span>
               </div>
             </div>
 

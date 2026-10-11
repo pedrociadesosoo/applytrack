@@ -8,6 +8,7 @@ import JDReadingView from "@/components/JDReadingView";
 import DeleteApplicationButton from "@/components/DeleteApplicationButton";
 import { ghostDeadline } from "@/lib/ghosting";
 import OfferDecisionPicker from "@/components/OfferDecisionPicker";
+import StageJourney from "@/components/StageJourney";
 
 export default async function ApplicationDetailPage({
   params,
@@ -60,7 +61,7 @@ export default async function ApplicationDetailPage({
         <div className="lg:col-span-2 space-y-8">
           <section>
             <h2 className="text-sm font-semibold text-neutral-900">Job description</h2>
-            <div className="mt-3 rounded-xl border border-neutral-200 bg-white p-5">
+            <div className="mt-3 rounded-3xl border border-neutral-200/70 bg-white p-5">
               {application.job_description ? (
                 <JDReadingView text={application.job_description} />
               ) : (
@@ -80,8 +81,16 @@ export default async function ApplicationDetailPage({
           </section>
 
           <section>
-            <h2 className="text-sm font-semibold text-neutral-900">Stage history</h2>
-            <ol className="mt-3 space-y-3 border-l border-neutral-200 pl-4">
+            <h2 className="text-sm font-semibold text-neutral-900">Journey</h2>
+            <p className="mt-0.5 text-xs text-neutral-500">Every stage this application has been through. Hover a stage for details.</p>
+            <div className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
+              <StageJourney events={events} current={application.current_stage} decision={application.offer_decision} />
+              <details className="group mt-4 border-t border-neutral-100 pt-3">
+                <summary className="cursor-pointer list-none text-xs font-medium text-neutral-500 hover:text-neutral-800">
+                  <span className="inline-block transition group-open:rotate-90">›</span> Full history ({events.length})
+                </summary>
+                <div className="mt-3">
+                  <ol className="mt-3 space-y-3 border-l border-neutral-200 pl-4">
               {events.map((event) => (
                 <li key={event.id} className="relative">
                   <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-neutral-300" />
@@ -93,6 +102,9 @@ export default async function ApplicationDetailPage({
                 </li>
               ))}
             </ol>
+                </div>
+              </details>
+            </div>
           </section>
         </div>
 
@@ -146,7 +158,7 @@ export default async function ApplicationDetailPage({
 
 function InfoBlock({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
+    <div className="rounded-3xl border border-neutral-200/70 bg-white p-4">
       <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">{title}</h3>
       <div className="mt-2">{children}</div>
     </div>

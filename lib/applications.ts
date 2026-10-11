@@ -12,7 +12,7 @@ export async function listApplications(filters: ListFilters = {}): Promise<Appli
   const supabase = await createServerSupabaseClient();
   let query = supabase
     .from("applications")
-    .select("*")
+    .select("*, application_events(stage, event_date, notes)")
     .order("updated_at", { ascending: false });
 
   if (filters.stage) {

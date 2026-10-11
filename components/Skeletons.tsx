@@ -6,7 +6,7 @@ export function CardsSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-neutral-200 bg-white p-4">
+        <div key={i} className="rounded-3xl border border-neutral-200/70 bg-white p-4">
           <Block className="h-3 w-20" />
           <Block className="mt-2 h-4 w-40" />
           <Block className="mt-3 h-3 w-full" />
@@ -42,7 +42,7 @@ export function KanbanSkeleton() {
 
 export function TableSkeleton() {
   return (
-    <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+    <div className="overflow-hidden rounded-3xl border border-neutral-200/70 bg-white">
       <div className="border-b border-neutral-200 px-4 py-2.5">
         <Block className="h-3 w-full max-w-md" />
       </div>
@@ -63,7 +63,7 @@ export function TableSkeleton() {
 export function CalendarSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <div className="rounded-xl border border-neutral-200 bg-white p-4 lg:col-span-2">
+      <div className="rounded-3xl border border-neutral-200/70 bg-white p-4 lg:col-span-2">
         <Block className="h-4 w-32" />
         <div className="mt-4 grid grid-cols-7 gap-1">
           {Array.from({ length: 35 }).map((_, i) => (
@@ -71,7 +71,7 @@ export function CalendarSkeleton() {
           ))}
         </div>
       </div>
-      <div className="rounded-xl border border-neutral-200 bg-white p-4">
+      <div className="rounded-3xl border border-neutral-200/70 bg-white p-4">
         <Block className="h-4 w-24" />
         <div className="mt-3 space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (

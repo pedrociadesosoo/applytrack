@@ -40,7 +40,7 @@ export default function KanbanBoard({
         return (
           <div
             key={stage}
-            className={`flex ${focusStage ? "w-full" : "w-72 flex-shrink-0"} flex-col rounded-xl border bg-neutral-50/60 transition-colors ${
+            className={`flex ${focusStage ? "w-full" : "w-72 flex-shrink-0"} flex-col rounded-3xl border bg-neutral-50/60 transition-colors ${
               isOver ? "border-indigo-300 bg-indigo-50/60" : "border-neutral-200"
             }`}
             onDragOver={(e) => {
@@ -85,7 +85,7 @@ export default function KanbanBoard({
                     e.dataTransfer.effectAllowed = "move";
                   }}
                   onClick={() => onQuickView(app)}
-                  className="cursor-grab rounded-lg border border-neutral-200 bg-white p-3 shadow-sm transition hover:shadow-md active:cursor-grabbing"
+                  className="cursor-grab rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-sm transition hover:shadow-md active:cursor-grabbing"
                 >
                   <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-400">
                     {app.company}

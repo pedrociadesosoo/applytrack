@@ -1,22 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400&display=swap");
 @import "tailwindcss";
 
-:root {
-  --background: #fafafa;
-  --foreground: #171717;
+/*
+ * Themes. Every component is written with Tailwind's neutral (surfaces/ink)
+ * and indigo (accent) scales, so a theme just re-points those scales.
+ * --tile-1..4 are the pastel stat-card colors. "classic" keeps Tailwind's
+ * defaults. The data-viz charts keep their own colorblind-validated colors.
+ */
+:root,
+[data-theme="classic"] {
+  --tile-1: #fdf3c7;
+  --tile-2: #fbdbe7;
+  --tile-3: #dcead0;
+  --tile-4: #dbe3fb;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+[data-theme="blush"] {
+  --color-white: #fffafb;
+  --color-neutral-50: #f7eef1;
+  --color-neutral-100: #f0e2e7;
+  --color-neutral-200: #e5d0d8;
+  --color-neutral-300: #d2b6c1;
+  --color-neutral-400: #a8899a;
+  --color-neutral-500: #876676;
+  --color-neutral-600: #6e5262;
+  --color-neutral-700: #59404f;
+  --color-neutral-800: #46313e;
+  --color-neutral-900: #3b2533;
+  --color-indigo-50: #fcf0f5;
+  --color-indigo-100: #f8dce8;
+  --color-indigo-200: #f1bfd4;
+  --color-indigo-300: #e79bba;
+  --color-indigo-400: #d9779f;
+  --color-indigo-500: #c55a87;
+  --color-indigo-600: #ac4673;
+  --color-indigo-700: #8e385f;
+  --tile-1: #f7e6a6;
+  --tile-2: #f6c9da;
+  --tile-3: #d4e0bf;
+  --tile-4: #cfd8f3;
+}
+
+[data-theme="lavender"] {
+  --color-white: #fdfcff;
+  --color-neutral-50: #f3f0f8;
+  --color-neutral-100: #e9e3f2;
+  --color-neutral-200: #dbd2ea;
+  --color-neutral-300: #c3b6da;
+  --color-neutral-400: #9a8bb6;
+  --color-neutral-500: #7a6b97;
+  --color-neutral-600: #62557d;
+  --color-neutral-700: #4f4467;
+  --color-neutral-800: #3e3553;
+  --color-neutral-900: #2f2842;
+  --color-indigo-50: #f4f0fd;
+  --color-indigo-100: #e6defb;
+  --color-indigo-200: #d2c3f7;
+  --color-indigo-300: #b8a0f0;
+  --color-indigo-400: #9b7de6;
+  --color-indigo-500: #8162d6;
+  --color-indigo-600: #6b4ebd;
+  --color-indigo-700: #573f9b;
+  --tile-1: #f6e4b5;
+  --tile-2: #e6d4f5;
+  --tile-3: #cfe6dc;
+  --tile-4: #d6def7;
+}
+
+[data-theme="sage"] {
+  --color-white: #fcfdfa;
+  --color-neutral-50: #f1f4ee;
+  --color-neutral-100: #e5ebdf;
+  --color-neutral-200: #d4ddca;
+  --color-neutral-300: #b9c7aa;
+  --color-neutral-400: #8d9d7c;
+  --color-neutral-500: #6d7e5d;
+  --color-neutral-600: #57664a;
+  --color-neutral-700: #46523c;
+  --color-neutral-800: #374130;
+  --color-neutral-900: #2a3225;
+  --color-indigo-50: #eef6ee;
+  --color-indigo-100: #d9ebd9;
+  --color-indigo-200: #bcdbbd;
+  --color-indigo-300: #96c598;
+  --color-indigo-400: #6fab73;
+  --color-indigo-500: #538f58;
+  --color-indigo-600: #417447;
+  --color-indigo-700: #355e3a;
+  --tile-1: #f3e3b0;
+  --tile-2: #f2d0c4;
+  --tile-3: #cfe2c3;
+  --tile-4: #cde0e6;
+}
+
+[data-theme="ocean"] {
+  --color-white: #fbfdfe;
+  --color-neutral-50: #eef3f7;
+  --color-neutral-100: #e0e9f0;
+  --color-neutral-200: #cbd8e4;
+  --color-neutral-300: #aabfd1;
+  --color-neutral-400: #7d95ab;
+  --color-neutral-500: #5f778d;
+  --color-neutral-600: #4b6074;
+  --color-neutral-700: #3c4e5f;
+  --color-neutral-800: #2f3d4b;
+  --color-neutral-900: #233039;
+  --color-indigo-50: #ecf6fb;
+  --color-indigo-100: #d3eaf6;
+  --color-indigo-200: #afd8ef;
+  --color-indigo-300: #80bfe3;
+  --color-indigo-400: #4fa1d3;
+  --color-indigo-500: #3285bb;
+  --color-indigo-600: #266b9b;
+  --color-indigo-700: #20577e;
+  --tile-1: #f5e5ae;
+  --tile-2: #f3d1d6;
+  --tile-3: #cfe5d6;
+  --tile-4: #cadff2;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 @keyframes slideIn {
   from { transform: translateX(24px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(6px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

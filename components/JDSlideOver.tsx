@@ -6,6 +6,7 @@ import type { Application } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 import StageBadge from "@/components/StageBadge";
 import JDReadingView from "@/components/JDReadingView";
+import StageJourney from "@/components/StageJourney";
 
 export default function JDSlideOver({
   application,
@@ -45,6 +46,16 @@ export default function JDSlideOver({
                 Applied {formatDate(application.application_date)}
               </span>
             </div>
+            {application.application_events && application.application_events.length > 1 && (
+              <div className="mt-3">
+                <StageJourney
+                  size="sm"
+                  events={application.application_events}
+                  current={application.current_stage}
+                  decision={application.offer_decision}
+                />
+              </div>
+            )}
           </div>
           <button
             onClick={onClose}

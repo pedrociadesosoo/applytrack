@@ -11,6 +11,7 @@ import ApplicationsTable from "@/components/ApplicationsTable";
 import CalendarView from "@/components/CalendarView";
 import PipelineOverview from "@/components/PipelineOverview";
 import StatTile from "@/components/StatTile";
+import DashboardHeader from "@/components/DashboardHeader";
 import Drawer from "@/components/Drawer";
 import ResponseBreakdown from "@/components/ResponseBreakdown";
 import StaleList from "@/components/StaleList";
@@ -137,14 +138,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-neutral-900">Applications</h1>
-          <p className="mt-1 text-sm text-neutral-500">
-            Every application, in one place — auto-tracked from your Gmail.
-          </p>
-        </div>
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <DashboardHeader stats={stats} />
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
           <GmailSyncButton
             onSynced={() => {
@@ -173,29 +169,33 @@ export default function DashboardPage() {
         </Link>
       )}
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile
           label="Total applications"
           value={stats ? stats.total.toString() : "—"}
           caption={stats ? `${stats.open} still open` : undefined}
+          tint={1}
         />
         <StatTile
           label="Response rate"
           value={stats ? formatPct(stats.responseRate) : "—"}
           caption={stats ? `${stats.responded} heard back` : undefined}
+          tint={2}
           onClick={stats ? () => setPanel("response") : undefined}
         />
         <StatTile
           label="Interview conversion"
           value={stats ? formatPct(stats.interviewConversionRate) : "—"}
           caption={stats ? `${stats.interviewed} reached interviews` : undefined}
+          tint={3}
           onClick={stats ? () => setPanel("response") : undefined}
         />
         <StatTile
           label="Needs follow-up"
           value={stats ? stats.staleCount.toString() : "—"}
           caption="quiet 10+ days"
-          tone={stats && stats.staleCount > 0 ? "attention" : "default"}
+          attention={!!stats && stats.staleCount > 0}
+          tint={4}
           onClick={stats ? () => setPanel("stale") : undefined}
         />
       </div>

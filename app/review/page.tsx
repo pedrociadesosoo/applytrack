@@ -82,7 +82,7 @@ function ReviewCard({ signal, onDone }: { signal: EmailSignal; onDone: () => voi
     "w-full rounded-md border border-neutral-200 bg-white px-2.5 py-1.5 text-sm text-neutral-800";
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
+    <div className="rounded-3xl border border-neutral-200/70 bg-white p-4 shadow-sm">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <p className="text-sm font-medium text-neutral-900">{signal.subject || "(no subject)"}</p>
         <span className="text-xs text-neutral-400">{formatDate(signal.received_at)}</span>

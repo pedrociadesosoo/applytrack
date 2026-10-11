@@ -5,6 +5,7 @@ import type { Application } from "@/lib/types";
 import { daysSince, formatDate, isStale } from "@/lib/format";
 import { SOURCE_LABELS } from "@/lib/types";
 import StageBadge from "@/components/StageBadge";
+import StageJourney from "@/components/StageJourney";
 
 export default function ApplicationCard({
   application,
@@ -16,7 +17,7 @@ export default function ApplicationCard({
   const stale = isStale(application.updated_at) && !["offer", "rejected", "withdrawn"].includes(application.current_stage);
 
   return (
-    <div className="group relative flex flex-col rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:shadow-md">
+    <div className="group relative flex flex-col rounded-3xl bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       {stale && (
         <span className="absolute -top-2 -right-2 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow">
           Stale
@@ -37,6 +38,17 @@ export default function ApplicationCard({
         </div>
         <StageBadge stage={application.current_stage} decision={application.offer_decision} />
       </div>
+
+      {application.application_events && application.application_events.length > 1 && (
+        <div className="mt-3">
+          <StageJourney
+            size="sm"
+            events={application.application_events}
+            current={application.current_stage}
+            decision={application.offer_decision}
+          />
+        </div>
+      )}
 
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500">
         <span>{SOURCE_LABELS[application.source]}</span>

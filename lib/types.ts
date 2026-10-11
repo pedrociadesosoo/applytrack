@@ -99,6 +99,8 @@ export interface Application {
   contact_email: string | null;
   confidence_rating: number | null;
   offer_decision: OfferDecision | null; // only meaningful at the "offer" stage
+  // Included by the list endpoint so cards can show each application's journey.
+  application_events?: { stage: ApplicationStage; event_date: string; notes: string | null }[];
   created_at: string;
   updated_at: string;
 }
@@ -115,7 +117,7 @@ export interface ApplicationEvent {
 
 export type ApplicationInput = Omit<
   Application,
-  "id" | "user_id" | "created_at" | "updated_at"
+  "id" | "user_id" | "created_at" | "updated_at" | "application_events"
 >;
 
 

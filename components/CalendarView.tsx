@@ -60,7 +60,7 @@ export default function CalendarView({
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <div className="rounded-xl border border-neutral-200 bg-white p-4 lg:col-span-2">
+      <div className="rounded-3xl border border-neutral-200/70 bg-white p-4 lg:col-span-2">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-neutral-900">{format(month, "MMMM yyyy")}</h3>
           <div className="flex items-center gap-1">
@@ -155,7 +155,7 @@ export default function CalendarView({
         )}
       </div>
 
-      <div className="rounded-xl border border-neutral-200 bg-white p-4">
+      <div className="rounded-3xl border border-neutral-200/70 bg-white p-4">
         <h3 className="mb-3 text-sm font-semibold text-neutral-900">Upcoming</h3>
         {upcoming.length === 0 ? (
           <p className="text-xs text-neutral-300">No upcoming deadlines set.</p>

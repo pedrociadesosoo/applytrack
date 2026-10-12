@@ -2,9 +2,13 @@
 
 **A job application tracker that updates itself from your Gmail.**
 
-🌐 **Live app:** [applytrack-rho.vercel.app](https://applytrack-rho.vercel.app) (invite-only for now while the Google sign-in is in testing; message me and I'll add you)
+🌐 **Try the demo:** [applytrack-rho.vercel.app/demo](https://applytrack-rho.vercel.app/demo) (no sign-in, sample data with made-up companies)
 
-I was applying to a lot of internships and my spreadsheet kept falling behind. I'd get an OA invite or a rejection email and forget to update the row. So I built ApplyTrack. It reads my job emails, adds new applications on its own, and moves each one through the stages (applied → OA → HireVue → interviews → offer or rejection). I just open the dashboard and see where everything stands.
+🔒 **Live app:** [applytrack-rho.vercel.app](https://applytrack-rho.vercel.app) (invite-only for now while the Google sign-in is in testing; message me and I'll add you)
+
+![ApplyTrack dashboard](docs/screenshots/dashboard.png)
+
+I was applying to a lot of internships and my spreadsheet kept falling behind. I'd get an online assessment invite or a rejection email and forget to update the row. So I built ApplyTrack. It reads my job emails, adds new applications on its own, and moves each one through the stages (applied → online assessment → video interview → interviews → offer or rejection). I just open the dashboard and see where everything stands.
 
 But tracking applications can feel heavy. Most trackers end up as a list of rejections, and that wears you down. I wanted ApplyTrack to feel calm and encouraging instead, something that reminds you there's hope even when an email says no.
 
@@ -12,43 +16,55 @@ But tracking applications can feel heavy. Most trackers end up as a list of reje
 
 ## What it does
 
-- **Gmail sync.** Click "Sync Gmail" and it scans your inbox for job emails. A "thanks for applying" email creates a new application. OA invites, HireVue invites, interview emails, offers, and rejections move the right application to the right stage.
+- **Gmail sync.** Click "Sync Gmail" and it scans your inbox for job emails. A "thanks for applying" email creates a new application. Online assessment invites, video interview invites (like HireVue), interview emails, offers, and rejections move the right application to the right stage.
 - **Review queue.** If the app isn't sure about an email, it doesn't guess. It puts the email in a review list where you can fix the company, role, or stage and confirm it, or dismiss it.
 - **Dashboard you can click into.**
-  - **Response rate:** click it to see a breakdown of where every application stands (offer, in process, rejected, went quiet, no response) and how many ever got an OA, HireVue, interview, offer, or rejection.
+  - **Response rate:** click it to see a breakdown of where every application stands (offer, in process, rejected, went quiet, no response) and how many ever got an online assessment, video interview, interview, offer, or rejection.
   - **Needs follow-up:** applications with no news in 10+ days, longest wait first, with buttons to email the recruiter, set a reminder, or mark it ghosted.
   - **Where things stand:** your pipeline from Applied to Offer. Click a stage to only see those applications.
 - **Auto-ghosting.** If a role says "Summer 2027" and it's June 1, 2027 with no outcome, it moves to Ghosted on its own. Roles without a season get ghosted after 60 days with no reply. Now I can actually see which companies ghost.
 - **Offer decisions.** When you get an offer, mark it as Deciding, Accepted, or Declined in one click. The badge updates everywhere, and once you've accepted or declined, it stops counting as an open application.
 - **Job description archive.** You can save the full job posting with each application, since postings disappear once a role closes. It's searchable, so "SQL" shows every role that asked for SQL.
 - **Four views:** cards, kanban (drag cards between stages), table, and calendar.
-- **Journey for every application.** Each stage it went through shows as a pill (Applied › OA › HireVue › Offer). Hover one to see when it happened, and edit the journey if anything is off.
-- **Smart calendar.** It suggests check-ins on its own: finish your OA, prep for interviews, follow up when things go quiet, decide on offers.
+- **Journey for every application.** Each stage it went through shows as a pill (Applied › Online Assessment › Video Interview › Offer). Hover one to see when it happened, and edit the journey if anything is off.
+- **Smart calendar.** It suggests check-ins on its own: finish your assessment, prep for interviews, follow up when things go quiet, decide on offers.
 - **Make it yours.** A greeting that changes with the time of day, a verse of the day or encouraging words (or off), and themes including Blush, Coffee, Dark, and Leopard.
+- **Encouragement for mixed days.** If you get a phone screen from one company and a rejection from another on the same day, it has a message for each one and switches between them every few minutes. A little teddy sits on top of the card and closes its eyes on the hard days.
+- **Plain-English stages.** Every stage has a short explanation ("What the Stages Mean"), so you don't need to know recruiting words like OA or HireVue.
 - **Search** that just shows company, role, and status.
+
+## Screenshots
+
+| Dashboard (Leopard theme) | An application's journey |
+| --- | --- |
+| ![Leopard theme](docs/screenshots/dashboard-leopard.png) | ![Application journey](docs/screenshots/application.png) |
+
+| Kanban view | Review queue |
+| --- | --- |
+| ![Kanban](docs/screenshots/kanban.png) | ![Review queue](docs/screenshots/review.png) |
 
 ---
 
 ## The PM side: decisions I made and why
 
 **1. Ask instead of guess.**
-Email is messy. A confirmation email might say "if selected, you'll get an online assessment," which isn't an OA invite. If the app guessed wrong it would quietly mess up my data, and then I wouldn't trust any of it. So clear emails get handled automatically and unclear ones go to the review queue. It's a little slower, but I trust what I see.
+Email is messy. A confirmation email might say "if selected, you'll get an online assessment," which isn't an actual assessment invite. If the app guessed wrong it would quietly mess up my data, and then I wouldn't trust any of it. So clear emails get handled automatically and unclear ones go to the review queue. It's a little slower, but I trust what I see.
 
 **2. Start free, add AI later.**
 I could have used an AI model to read every email, but that costs money on every sync. I started with keyword and sender rules (free) and sent anything unclear to the review queue. AI can be added later for just the unclear emails, without changing the rest of the app.
 
 **3. Applications only move forward.**
-Companies send reminder emails. A "reminder: finish your OA" email shouldn't move me back to OA after I've already had a phone screen. So emails can only move an application forward. If an email would move one backwards, I decide.
+Companies send reminder emails. A "reminder: finish your assessment" email shouldn't move me back to the assessment stage after I've already had a phone screen. So emails can only move an application forward. If an email would move one backwards, I decide.
 
 **4. Use my own data to find what was missing.**
-After my first real sync I checked what got sorted wrong. Video interviews (HireVue and similar) were getting labeled as OAs, phone screens, and even onsites. So I added **HireVue** as its own stage, and the next sync sorted all of them correctly. Same thing with company names: "Bofa" and "Bank of America" were showing up as two different companies, so I added a list of common short names.
+After my first real sync I checked what got sorted wrong. Video interviews (HireVue and similar) were getting labeled as online assessments, phone screens, and even onsites. So I added video interviews (HireVue) as their own stage, and the next sync sorted all of them correctly. Same thing with company names: "Bofa" and "Bank of America" were showing up as two different companies, so I added a list of common short names.
 
 **5. "Ghosted" should mean something.**
 Most trackers make you decide when something is ghosted. I made it a rule based on the role's season, plus a 60-day rule for everything else, so ghosting is consistent and I can compare companies fairly. If you move something out of Ghosted yourself, the app respects that and doesn't ghost it again.
 
 **6. Clear definitions for the numbers.**
-- **Response rate** = applications where the company replied in any way (OA, HireVue, interview, offer, or rejection). A rejection still counts as a reply.
-- **Interview conversion** = applications that reached a live interview (phone screen or later). OAs and HireVues don't count, since you're not talking to a person.
+- **Response rate** = applications where the company replied in any way (online assessment, video interview, interview, offer, or rejection). A rejection still counts as a reply.
+- **Interview conversion** = applications that reached a live interview (phone screen or later). Online assessments and video interviews don't count, since you're not talking to a person.
 - **Needs follow-up** = open applications with no news in 10+ days and no reminder already set.
 - **Open** = still in play. Rejected, ghosted, and withdrawn applications are closed, and so is an offer once you've accepted or declined it. An offer you're still deciding on stays open.
 
@@ -56,6 +72,9 @@ Most trackers make you decide when something is ghosted. I made it a rule based 
 Job hunting is stressful, and a tracker shouldn't make it worse. So the dashboard greets you by name based on the time of day, uses soft colors and themes you can pick, and shows a short line of encouragement under the greeting. It also pays attention to what just happened. After a rejection, it acknowledges it and shares something hopeful. When you move forward or get an offer, it celebrates with you.
 
 **Why scripture?** My faith is a big part of how I get through hard seasons, including job searching, so I wanted that in the app I use every day. By default it shows a verse of the day, plus verses picked for the moment, like Psalm 34:18 after a rejection or Joshua 1:9 before an interview. But I also wanted my friends to use this, and not everyone shares my faith. So in Settings you can switch to general encouraging words (no scripture) or turn it off completely. It's personal to me, but welcoming to everyone. The verses come from the World English Bible, which is public domain, so they're free to use in a public app.
+
+**8. Listen to people who've never seen it.**
+I shared the demo with a friend and asked for honest feedback. They didn't know what "OA" or "HireVue" meant, said the headers looked inconsistent, and said parts of it looked a bit too AI-generated. All fair. I knew those words because I'm deep in recruiting, but a first-time user isn't. So I renamed the stages in plain English (Online Assessment, Video Interview, Final Round), added a short explanation for each one, made every header Title Case, and simplified the design: fewer colored boxes, cleaner borders, and no decoration that didn't help. They also liked how straightforward it was, so I kept that and didn't add anything that would clutter it.
 
 ---
 
@@ -149,8 +168,8 @@ Open http://localhost:3000 and sign in with Google. On the permission screen, **
 ## What's next
 
 - [ ] Use AI to sort only the emails the rules aren't sure about
-- [ ] Deploy it online so friends can use it without setting anything up
-- [ ] Merge duplicate applications in one click
+- [x] Deploy it online, with a demo anyone can try
+- [x] Merge duplicate applications in one click
 - [ ] AI-drafted follow-up emails (drafted only, never sent automatically)
 - [ ] Time-in-stage stats (how long companies take at each step)
 - [ ] Interview prep notes generated from the saved job description
@@ -159,7 +178,7 @@ Open http://localhost:3000 and sign in with Google. On the permission screen, **
 
 ## How I built it
 
-I built ApplyTrack with help from Claude, Anthropic's AI assistant, as my coding partner. I decided what the app should do and made the product calls: what counts as a response, when something is ghosted, adding a HireVue stage, and having a review queue instead of auto-guessing. I also tested everything on my real inbox and pointed out what was wrong or confusing. Claude helped me write and debug the code, set up the database and Gmail connection, and test the email sorter.
+I built ApplyTrack with help from Claude, Anthropic's AI assistant, as my coding partner. I decided what the app should do and made the product calls: what counts as a response, when something is ghosted, adding a video interview stage, renaming stages after user feedback, and having a review queue instead of auto-guessing. I also tested everything on my real inbox and pointed out what was wrong or confusing. Claude helped me write and debug the code, set up the database and Gmail connection, and test the email sorter.
 
 Working this way taught me a lot about being specific about what you want, checking AI output against real data, and pushing back when something didn't feel right. Those are skills I think matter a lot for building AI products.
 

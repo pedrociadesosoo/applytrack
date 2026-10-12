@@ -111,7 +111,7 @@ export default function DashboardHeader({ stats }: { stats: DashboardStats | nul
 
       {slide && (
         <figure
-          className={`relative mt-10 max-w-2xl rounded-2xl border px-5 py-4 ${
+          className={`relative mt-16 max-w-2xl rounded-2xl border px-5 py-4 ${
             slide.tone === "comfort"
               ? "border-indigo-100 bg-indigo-50"
               : slide.tone === "celebrate"
@@ -119,10 +119,10 @@ export default function DashboardHeader({ stats }: { stats: DashboardStats | nul
                 : "border-neutral-200/80 bg-white"
           }`}
         >
-          <span className="absolute -top-9 right-5">
+          <span className="absolute -top-16 right-6">
             <Buddy mood={slide.tone === "comfort" ? "comfort" : "happy"} />
           </span>
-          <figcaption className="pr-16 text-sm font-semibold text-neutral-900">{slide.title}</figcaption>
+          <figcaption className="text-sm font-semibold text-neutral-900">{slide.title}</figcaption>
           <blockquote className="mt-1.5 text-[15px] leading-relaxed text-neutral-700">{slide.line.text}</blockquote>
           {slide.line.reference && <p className="mt-1.5 text-xs text-neutral-500">{slide.line.reference} (WEB)</p>}
         </figure>

@@ -234,3 +234,8 @@ h1, h2, h3 {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Sticker buddy: a small hop when you hover it */
+.buddy { transition: transform 0.25s ease; transform-origin: 50% 90%; }
+.buddy:hover { transform: translateY(-3px) rotate(-4deg); }
+@media (prefers-reduced-motion: reduce) { .buddy:hover { transform: none; } }

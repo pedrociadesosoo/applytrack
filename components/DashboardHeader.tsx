@@ -5,6 +5,7 @@ import type { DashboardStats, RecentMoment } from "@/lib/stats";
 import { STAGE_LABELS } from "@/lib/types";
 import { useProfile } from "@/lib/use-profile";
 import { pickEncouragement, type Encouragement } from "@/lib/encouragement";
+import Buddy from "./Buddy";
 
 // Which 5-minute window we're in, so the message changes every 5 minutes
 // and stays the same if you refresh within that window.
@@ -110,7 +111,7 @@ export default function DashboardHeader({ stats }: { stats: DashboardStats | nul
 
       {slide && (
         <figure
-          className={`mt-5 max-w-2xl rounded-2xl border px-5 py-4 ${
+          className={`relative mt-10 max-w-2xl rounded-2xl border px-5 py-4 ${
             slide.tone === "comfort"
               ? "border-indigo-100 bg-indigo-50"
               : slide.tone === "celebrate"
@@ -118,7 +119,10 @@ export default function DashboardHeader({ stats }: { stats: DashboardStats | nul
                 : "border-neutral-200/80 bg-white"
           }`}
         >
-          <figcaption className="text-sm font-semibold text-neutral-900">{slide.title}</figcaption>
+          <span className="absolute -top-9 right-5">
+            <Buddy mood={slide.tone === "comfort" ? "comfort" : "happy"} />
+          </span>
+          <figcaption className="pr-16 text-sm font-semibold text-neutral-900">{slide.title}</figcaption>
           <blockquote className="mt-1.5 text-[15px] leading-relaxed text-neutral-700">{slide.line.text}</blockquote>
           {slide.line.reference && <p className="mt-1.5 text-xs text-neutral-500">{slide.line.reference} (WEB)</p>}
         </figure>

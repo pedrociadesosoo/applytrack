@@ -65,6 +65,7 @@ export interface RecentMoment {
   stage: ApplicationStage;
   company: string;
   date: string;
+  applicationId: string;
 }
 
 const PROGRESS_STAGES = new Set<ApplicationStage>([
@@ -166,6 +167,7 @@ export function computeStats(apps: StatsApp[], events: StatsEvent[]): DashboardS
         stage: e.stage,
         company: companyOf.get(e.application_id) ?? "a company",
         date: e.event_date,
+        applicationId: e.application_id,
       });
     }
   }

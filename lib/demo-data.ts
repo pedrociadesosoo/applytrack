@@ -28,6 +28,7 @@ const SPECS: Spec[] = [
   {
     company: "Juniper Health",
     role: "Data Analyst Intern, Summer 2027",
+    jd: "About the role\nJoin our analytics team to help clinics understand patient wait times and appointment trends.\n\nResponsibilities\n- Build dashboards in Tableau for clinic managers\n- Write SQL queries to pull and clean appointment data\n- Analyze trends and present findings to stakeholders\n- Partner with engineers to improve data quality\n\nQualifications\n- Experience with SQL and Excel\n- Some Python (pandas) is a plus\n- Interest in healthcare and patient privacy\n- Clear communicator",
     source: "company_site",
     steps: [["applied", 25], ["phone_screen", 1, "Detected from email: \"Juniper Health – Phone Screen Scheduling\""]],
     contact: "talent@juniperhealth.example",
@@ -35,24 +36,28 @@ const SPECS: Spec[] = [
   {
     company: "Lumen Learning Co",
     role: "Associate PM Intern, Summer 2027",
+    jd: "About the role\nHelp us build learning tools used by thousands of high school students.\n\nResponsibilities\n- Run user interviews with students and teachers\n- Write product specs and prioritize the roadmap with your team\n- Define success metrics and track them with SQL\n- Collaborate with engineers and designers in two-week sprints\n\nQualifications\n- Pursuing a degree in CS, IS, or a related field\n- Curious, organized, and a strong communicator",
     source: "linkedin",
     steps: [["applied", 30], ["oa", 26], ["technical_interview", 12]],
   },
   {
     company: "Cobalt Pay",
     role: "Software Engineering Intern, Summer 2027",
+    jd: "About the role\nCobalt Pay builds payment APIs for online stores.\n\nResponsibilities\n- Build features in TypeScript and React\n- Write and test REST APIs\n- Use Git and code reviews every day\n\nQualifications\n- Data structures and algorithms coursework\n- Experience with JavaScript or Java\n- Interest in fintech",
     source: "career_fair",
     steps: [["applied", 22], ["oa", 6, "Detected from email: \"Cobalt Pay invites you to complete a coding assessment\""]],
   },
   {
     company: "Harbor & Finch",
     role: "Business Analyst Intern, Summer 2027",
+    jd: "About the role\nHarbor & Finch helps small banks modernize their payments. As a Business Analyst Intern you'll work across product and operations.\n\nWhat you'll do\n- Gather requirements from operations teams\n- Document current processes and find ways to automate them\n- Analyze payments data in Excel and SQL\n- Present recommendations to managers\n\nWhat we're looking for\n- Strong communication and organization\n- Comfort with spreadsheets and pivot tables\n- Interest in fintech and banking",
     source: "company_site",
     steps: [["applied", 40], ["hirevue", 8, "Detected from email: \"Harbor & Finch: Video Interview Invitation\""]],
   },
   {
     company: "Meridian Analytics",
     role: "Data Science Intern, Summer 2027",
+    jd: "About the team\nWe build forecasting models for retail clients.\n\nResponsibilities\n- Clean and explore large datasets in Python\n- Build and evaluate machine learning models\n- Design A/B tests and explain results to clients\n- Present findings to cross-functional teams\n\nQualifications\n- Python, pandas, and scikit-learn\n- Statistics coursework\n- Git and version control",
     source: "referral",
     steps: [["applied", 35], ["oa", 30], ["behavioral", 9]],
     contact: "campus@meridiananalytics.example",

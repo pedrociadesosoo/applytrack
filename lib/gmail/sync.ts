@@ -2,6 +2,7 @@ import { createAdminSupabaseClient, createServerSupabaseClient } from "@/lib/sup
 import { classifyEmail } from "@/lib/gmail/classify";
 import { getAccessToken, getMessage, listMessageIds, mapWithConcurrency } from "@/lib/gmail/client";
 import { applySignal, findMatch, type AppRow } from "@/lib/gmail/apply";
+import { fetchPosting, findPostingRef } from "@/lib/jobs/posting";
 
 // First sync looks back to the start of this recruiting season.
 const BACKFILL_FROM = new Date("2026-08-01T00:00:00Z");
@@ -130,6 +131,9 @@ export async function runGmailSync(): Promise<SyncResult> {
         fromHeader: msg.from,
       });
       applicationId = id;
+      if (outcome === "created" || outcome === "updated" || outcome === "duplicate") {
+        await attachPostingIfMissing(supabase, id, msg.body);
+      }
       if (outcome === "created") result.created += 1;
       if (outcome === "updated") result.updated += 1;
       // Would move an application backwards: let a human decide.
@@ -165,4 +169,31 @@ export async function runGmailSync(): Promise<SyncResult> {
   });
 
   return result;
+}
+
+// If the email links to a Greenhouse, Lever, or Ashby posting and the
+// application has no job description yet, save it. Best effort: a failure
+// here never stops the sync.
+async function attachPostingIfMissing(
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  applicationId: string,
+  body: string
+) {
+  if (!findPostingRef(body)) return;
+  try {
+    const { data } = await supabase
+      .from("applications")
+      .select("job_description")
+      .eq("id", applicationId)
+      .single();
+    if (data?.job_description) return;
+    const posting = await fetchPosting(body);
+    if (!posting) return;
+    await supabase
+      .from("applications")
+      .update({ job_description: posting.description, job_post_url: posting.url })
+      .eq("id", applicationId);
+  } catch {
+    // ignore
+  }
 }

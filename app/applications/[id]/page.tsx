@@ -4,7 +4,7 @@ import { getApplication, getApplicationEvents } from "@/lib/applications";
 import { SOURCE_LABELS } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 import StageBadge from "@/components/StageBadge";
-import JDReadingView from "@/components/JDReadingView";
+import JobPrepSection from "@/components/JobPrepSection";
 import DeleteApplicationButton from "@/components/DeleteApplicationButton";
 import { ghostDeadline } from "@/lib/ghosting";
 import OfferDecisionPicker from "@/components/OfferDecisionPicker";
@@ -60,26 +60,14 @@ export default async function ApplicationDetailPage({
 
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-8">
-          <section>
-            <h2 className="text-sm font-semibold text-neutral-900">Job Description</h2>
-            <div className="mt-3 rounded-2xl border border-neutral-200/70 bg-white p-5">
-              {application.job_description ? (
-                <JDReadingView text={application.job_description} />
-              ) : (
-                <p className="text-sm text-neutral-400">No job description saved.</p>
-              )}
-              {application.job_post_url && (
-                <a
-                  href={application.job_post_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-700"
-                >
-                  Original posting ↗
-                </a>
-              )}
-            </div>
-          </section>
+          <JobPrepSection
+            applicationId={application.id}
+            company={application.company}
+            role={application.role_title}
+            stage={application.current_stage}
+            initialDescription={application.job_description}
+            initialUrl={application.job_post_url}
+          />
 
           <JourneySection
             applicationId={application.id}

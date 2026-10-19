@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import type { DashboardStats, RecentMoment } from "@/lib/stats";
 import { STAGE_LABELS } from "@/lib/types";
@@ -49,6 +50,7 @@ function titleFor(m: RecentMoment) {
 
 interface Slide {
   key: string;
+  prepHref?: string;
   title: string;
   tone: "comfort" | "celebrate" | "daily";
   line: Encouragement;
@@ -72,6 +74,7 @@ export default function DashboardHeader({ stats }: { stats: DashboardStats | nul
           title: titleFor(m),
           tone: m.kind === "rejected" ? "comfort" : m.kind === "offer" ? "celebrate" : "daily",
           line,
+          prepHref: m.kind === "progress" ? `/applications/${m.applicationId}#prep` : undefined,
         });
       }
     });
@@ -125,6 +128,14 @@ export default function DashboardHeader({ stats }: { stats: DashboardStats | nul
           <figcaption className="text-sm font-semibold text-neutral-900">{slide.title}</figcaption>
           <blockquote className="mt-1.5 text-[15px] leading-relaxed text-neutral-700">{slide.line.text}</blockquote>
           {slide.line.reference && <p className="mt-1.5 text-xs text-neutral-500">{slide.line.reference} (WEB)</p>}
+          {slide.prepHref && (
+            <Link
+              href={slide.prepHref}
+              className="mt-3 inline-block rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-neutral-700"
+            >
+              Open Your Prep Guide
+            </Link>
+          )}
         </figure>
       )}
     </div>

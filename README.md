@@ -24,6 +24,8 @@ But tracking applications can feel heavy. Most trackers end up as a list of reje
   - **Where things stand:** your pipeline from Applied to Offer. Click a stage to only see those applications.
 - **Auto-ghosting.** If a role says "Summer 2027" and it's June 1, 2027 with no outcome, it moves to Ghosted on its own. Roles without a season get ghosted after 60 days with no reply. Now I can actually see which companies ghost.
 - **Offer decisions.** When you get an offer, mark it as Deciding, Accepted, or Declined in one click. The badge updates everywhere, and once you've accepted or declined, it stops counting as an open application.
+- **Interview prep built from the job.** When an application reaches an interview stage, the app builds a prep guide from that job's description: the skills it asks for with practice tasks, likely questions (including ones made from the posting's responsibilities), tips for that exact stage, and questions to ask them. Video interviews get a 90-second practice timer. It's free: no AI, just reading the posting.
+- **Finds the job description for you.** If a job email links to a Greenhouse, Lever, or Ashby posting, the app pulls the full description from the job board's free public API. For other sites, you paste the link or the text once.
 - **Job description archive.** You can save the full job posting with each application, since postings disappear once a role closes. It's searchable, so "SQL" shows every role that asked for SQL.
 - **Four views:** cards, kanban (drag cards between stages), table, and calendar.
 - **Journey for every application.** Each stage it went through shows as a pill (Applied › Online Assessment › Video Interview › Offer). Hover one to see when it happened, and edit the journey if anything is off.
@@ -172,7 +174,8 @@ Open http://localhost:3000 and sign in with Google. On the permission screen, **
 - [x] Merge duplicate applications in one click
 - [ ] AI-drafted follow-up emails (drafted only, never sent automatically)
 - [ ] Time-in-stage stats (how long companies take at each step)
-- [ ] Interview prep notes generated from the saved job description
+- [x] Interview prep generated from the saved job description
+- [ ] AI-written prep that also uses your resume
 
 ---
 
